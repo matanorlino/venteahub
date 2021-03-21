@@ -1,0 +1,150 @@
+/*===== GOOGLE FONTS =====*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+  /*===== Fonts =====*/
+  
+  
+
+* {
+    box-sizing: border-box;
+  }
+
+  .nav__icon{
+    font-size: 1.22rem;
+  }
+  
+  #myInput {
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    width: 95%;
+    font-size: 15px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    font-family: 'Poppins';
+  }
+
+  #fixtable{
+    max-height:300px;
+    overflow:auto;
+  }
+  
+  #myTable {
+    border-collapse: collapse;
+    width: 95%;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    font-family: 'Poppins';
+  }
+  
+  #myTable th, #myTable td {
+    text-align: left;
+    padding: 12px;
+  }
+  
+  #myTable tr {
+    border-bottom: 1px solid #ddd;
+    
+  }
+  
+  #myTable tr.header {
+    background-color: rgb(62, 115, 97);
+    color: white;
+  }
+  #myTable tr:hover {
+    background-color: #e8e8e9;
+    color: black;
+  }
+
+  #myBtn, #myBtn1, #myBtn2, #myBtn3 {
+    background-color: rgb(62, 115, 97); 
+    border: none;
+    color: white;
+    padding: 15px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+  }
+  
+  #myBtn:hover, #myBtn1:hover, #myBtn2:hover, #myBtn3:hover {
+    background-color:  rgb(126, 186, 165);
+    color: white;
+  }
+
+  /* The Modal (background) */
+.modal {
+  padding: 2rem 0 0 17rem;
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 5% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  
+  font-family: 'Poppins';
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: rgb(62, 115, 97); 
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Poppins';
+}
+
+input[type=submit]:hover {
+  background-color:  rgb(126, 186, 165);
+}
+
+#form {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
