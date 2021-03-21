@@ -8,17 +8,16 @@ import android.view.View;
 
 import com.dehaja.venteahubmilktea.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
     }
 
-    public void registerOnClick(View view) {
-        Intent registerIntent = new Intent("android.intent.action.REGISTER");
-        startActivity(registerIntent);
+    public void submitOnClick(View view) {
+        Intent submitIntent = new Intent("android.intent.action.LOGIN");
+        startActivity(submitIntent);
     }
-
 }

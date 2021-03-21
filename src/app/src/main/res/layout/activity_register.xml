@@ -8,7 +8,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:padding="15dp"
-    tools:context=".ui.LoginActivity">
+    tools:context=".ui.RegisterActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -24,6 +24,13 @@
         android:paddingRight="50dp">
 
         <EditText
+            android:id="@+id/txtEmail"
+            style="@style/textbox_style"
+            android:layout_width="match_parent"
+            android:hint="@string/prompt_email"
+            android:inputType="text|textEmailAddress" />
+
+        <EditText
             android:id="@+id/txtUsername"
             style="@style/textbox_style"
             android:layout_width="match_parent"
@@ -37,18 +44,11 @@
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/btnSignin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/action_sign_in" />
-
-        <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/action_register"
-            android:onClick="registerOnClick"
-            />
+            android:text="@string/action_submit"
+            android:onClick="submitOnClick"/>
     </LinearLayout>
 
 </LinearLayout>
