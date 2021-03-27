@@ -5,6 +5,9 @@ public class Properties {
      * Configuration
      */
     public static final String SERVER_URL = "http://192.168.1.28/commission/";
+    public static final String ERROR = "0";
+    public static final String SUCCESS = "1";
+    public static final String DUPLICATE = "2";
     /*
      * Access Level
      */

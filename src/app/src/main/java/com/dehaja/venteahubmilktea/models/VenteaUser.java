@@ -4,15 +4,17 @@ public class VenteaUser {
     private int id;
     private String username;
     private String password;
+    private String email;
     private String contact_no;
     private String accesslevel;
 
     public VenteaUser () {}
 
-    public VenteaUser(int id, String username, String password, String contact_no, String accesslevel) {
+    public VenteaUser(int id, String username, String password, String email, String contact_no, String accesslevel) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.email = email;
         this.contact_no = contact_no;
         this.accesslevel = accesslevel;
     }
@@ -41,7 +43,21 @@ public class VenteaUser {
         this.password = password;
     }
 
-    public String getContact_no() { return this.contact_no; }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getContact_no() {
+        return contact_no;
+    }
+
+    public void setContact_no(String contact_no) {
+        this.contact_no = contact_no;
+    }
 
     public String getAccesslevel() {
         return accesslevel;
