@@ -7,11 +7,10 @@
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare('SELECT * FROM user WHERE username = ? AND password = ?');
-    $stmt = $stmt->bind_param('ss', $username, $password);
-    $stmt->execute();
-    
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
-    echo json_encode($data);
+    $stmt = $conn->prepare("SELECT * FROM user WHERE username=? AND password=?;");
+    if ($stmt && $stmt->bind_param('ss', $username, $password) && $stmt->execute()) {
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+        echo json_encode($data);
+    }
 ?>
