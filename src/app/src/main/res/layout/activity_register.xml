@@ -43,12 +43,18 @@
             android:hint="@string/prompt_password"
             android:inputType="textPassword" />
 
+        <Switch
+            android:id="@+id/swDriver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_driver_account" />
+
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/action_submit"
-            android:onClick="submitOnClick"/>
+            android:onClick="submitOnClick"
+            android:text="@string/action_submit" />
     </LinearLayout>
 
 </LinearLayout>

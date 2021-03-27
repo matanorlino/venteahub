@@ -10,22 +10,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VenteaHubMilkTea">
+
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/app_name"
             tools:ignore="DuplicateActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.LOGIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.RegisterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.REGISTER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.MainCustomerActivity"
+            android:label="@string/title_activity_main_customer"
+            android:theme="@style/Theme.VenteaHubMilkTea.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.CUSTOMER"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
