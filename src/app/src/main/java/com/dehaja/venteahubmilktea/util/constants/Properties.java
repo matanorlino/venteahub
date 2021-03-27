@@ -4,7 +4,7 @@ public class Properties {
     /*
      * Configuration
      */
-    public static final String SERVER_URL = "http://localhost/commission/";
+    public static final String SERVER_URL = "http://192.168.1.28/commission/";
     /*
      * Access Level
      */

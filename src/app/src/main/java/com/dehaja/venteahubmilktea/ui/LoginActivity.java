@@ -5,10 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+
+import org.apache.http.params.HttpParams;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -36,8 +45,9 @@ public class LoginActivity extends AppCompatActivity {
         // Move to Customer Menu
         Intent mainCustomerIntent = new Intent("android.intent.action.CUSTOMER");
         mainCustomerIntent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-        startActivity(mainCustomerIntent);
+//        startActivity(mainCustomerIntent);
 
+        testAPI("123", "123");
         // Move to Driver Menu
     }
 
@@ -70,4 +80,41 @@ public class LoginActivity extends AppCompatActivity {
         return loginUser;
     }
 
+    public void testAPI(String username, String password) {
+
+        String url = Properties.SERVER_URL + "api/app_login.php";
+        Toast t = Toast.makeText(getApplicationContext(), url, Toast.LENGTH_LONG);
+        t.show();
+
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("username", username);
+            postData.put("password", password);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+        (Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    Toast t = Toast.makeText(getApplicationContext(), response.getString("response"), Toast.LENGTH_LONG);
+                    t.show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO: Handle error
+                Toast t = Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG);
+                t.show();
+            }
+        });
+    }
 }

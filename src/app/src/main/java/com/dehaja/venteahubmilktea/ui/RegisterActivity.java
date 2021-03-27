@@ -20,13 +20,13 @@ import com.dehaja.venteahubmilktea.util.constants.NotificationTool;
 import static androidx.core.content.ContextCompat.getSystemService;
 
 public class RegisterActivity extends AppCompatActivity {
-    private final String CHANNEL_NAME = "Ventea Hub";
+    private final String CHANNEL_NAME = "VenteaHub";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        createNotificationChannel("main_notif");
+        createNotificationChannel(CHANNEL_NAME);
     }
 
     public void submitOnClick(View view) {
