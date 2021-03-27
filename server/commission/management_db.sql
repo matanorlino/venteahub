@@ -169,6 +169,7 @@ CREATE TABLE `user` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `contact_no` varchar(15) NOT NULL,
   `accesslevel` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -176,12 +177,12 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `password`, `email`, `accesslevel`) VALUES
-(1, 'aughus', 'bueno', 'aughusbueno@gmail.com', 'admin'),
-(3, 'jules', 'diego', 'jules@gmail.com', 'admin'),
-(4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', 'admin'),
-(6, 'rivera', 'rivera', 'rivera@gmail.com', 'admin'),
-(7, '123', '123', '123@123.com', 'admin');
+INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `accesslevel`) VALUES
+(1, 'aughus', 'bueno', 'aughusbueno@gmail.com', '09123456789', 'admin'),
+(3, 'jules', 'diego', 'jules@gmail.com', '09123456789', 'admin'),
+(4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', '09123456789', 'admin'),
+(6, 'rivera', 'rivera', 'rivera@gmail.com', '09123456789', 'admin'),
+(7, '123', '123', '123@123.com', '09123456789', 'admin');
 
 --
 -- Indexes for dumped tables
