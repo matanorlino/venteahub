@@ -4,8 +4,12 @@
     if (mysqli_connect_errno()) {
       echo "Failed to connect to database: " . mysqli_connect_error();
     }
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    if (isset($_POST['username'])) {
+        $username = $_POST['username'];
+    }
+    if (isset($_POST['password'])) {
+        $password = $_POST['password'];
+    }
 
     $stmt = $conn->prepare("SELECT * FROM user WHERE username=? AND password=?;");
     $stmt->bind_param('ss', $username, $password);
