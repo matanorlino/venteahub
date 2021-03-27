@@ -6,11 +6,13 @@
 	{
 		private $response;
 		private $data = [];
+		private $message;
 
-		function __construct($response, $data)
+		function __construct($response, $data, $message)
 		{
 			$this->response = $response;
 			$this->data = $data;
+			$this->message = $message;
 		}
 
 		function setResponse($response) {
@@ -33,6 +35,7 @@
 			$json = [];
 			$json['response'] = $this->response;
 			$json['data'] = $this->data;
+			$json['message'] = $this->message;
 			return $json;
 		}
 	}
