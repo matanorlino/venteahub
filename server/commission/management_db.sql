@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.4
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 26, 2021 at 08:38 AM
--- Server version: 10.1.37-MariaDB
--- PHP Version: 7.3.0
+-- Generation Time: Mar 27, 2021 at 11:21 AM
+-- Server version: 10.4.17-MariaDB
+-- PHP Version: 8.0.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -121,6 +120,18 @@ INSERT INTO `feedback` (`feedback_id`, `product_id`, `user_id`, `feedback_desc`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `order_products`
+--
+
+CREATE TABLE `order_products` (
+  `order_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `qty` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `product`
 --
 
@@ -143,7 +154,7 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_id`, `product_category_id`, `market_price`, `sell_price`, `product_code`, `product_img`, `model`, `purchase_description`, `product_description`, `status`, `product_name`) VALUES
-(7, 6, 80, 90, 'c0en', 'corndog.jpg', 'daoisj', 'ewan basta hotdog', 'hotdog na ma mais', NULL, 'corndog'),
+(7, 5, 80, 90, 'c0en', 'corndog.jpg', 'daoisj', 'ewan basta hotdog', 'hotdog na ma mais', 'sale', 'corndog'),
 (8, 13, 800, 900, 'p@nc1t', 'pancit.jpg', 'mod123', 'masarap na pancit ', 'pancit na masarap', NULL, 'pancit'),
 (9, 7, 20, 30, 'oiap213', 'bugs.jpg', 'dmasdjib', 'bugs na malinis', 'masarap na bugs', NULL, 'fried bugs');
 
@@ -169,7 +180,8 @@ INSERT INTO `user` (`id`, `username`, `password`, `email`, `accesslevel`) VALUES
 (1, 'aughus', 'bueno', 'aughusbueno@gmail.com', 'admin'),
 (3, 'jules', 'diego', 'jules@gmail.com', 'admin'),
 (4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', 'admin'),
-(6, 'rivera', 'rivera', 'rivera@gmail.com', 'admin');
+(6, 'rivera', 'rivera', 'rivera@gmail.com', 'admin'),
+(7, '123', '123', '123@123.com', 'admin');
 
 --
 -- Indexes for dumped tables
@@ -198,6 +210,13 @@ ALTER TABLE `driver`
 --
 ALTER TABLE `feedback`
   ADD PRIMARY KEY (`feedback_id`);
+
+--
+-- Indexes for table `order_products`
+--
+ALTER TABLE `order_products`
+  ADD KEY `fk_order_products_customer_order` (`order_id`),
+  ADD KEY `fk_order_products_product` (`product_id`);
 
 --
 -- Indexes for table `product`
@@ -249,7 +268,18 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `order_products`
+--
+ALTER TABLE `order_products`
+  ADD CONSTRAINT `fk_order_products_customer_order` FOREIGN KEY (`order_id`) REFERENCES `customer_order` (`order_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
