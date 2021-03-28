@@ -4,6 +4,8 @@
     <string name="prompt_username">Username</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_contact_no">Contact No.</string>
+    <string name="prompt_mobile_mask">09xxxxxxxxx</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_driver_account">Driver Account</string>
     <string name="action_register">Register</string>

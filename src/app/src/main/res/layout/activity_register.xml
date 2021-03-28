@@ -43,8 +43,25 @@
             android:hint="@string/prompt_password"
             android:inputType="textPassword" />
 
+        <br.com.sapereaude.maskedEditText.MaskedEditText
+            android:id="@+id/txtContactNo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_mobile_mask"
+            android:inputType="phone"
+            android:textAlignment="center"
+            app:allowed_chars="1234567890"
+            app:keep_hint="true"
+            app:mask="#### #### ###" />
+
+<!--        <EditText-->
+<!--            android:id="@+id/txtContactNo"-->
+<!--            style="@style/textbox_style"-->
+<!--            android:hint="@string/prompt_contact_no"-->
+<!--            android:inputType="textPassword" />-->
+
         <Switch
-            android:id="@+id/swDriver"
+            android:id="@+id/swAccsLvl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/action_driver_account" />

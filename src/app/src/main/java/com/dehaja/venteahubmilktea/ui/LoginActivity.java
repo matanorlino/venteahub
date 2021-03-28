@@ -19,6 +19,7 @@ import com.android.volley.toolbox.Volley;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+import com.dehaja.venteahubmilktea.util.constants.Validator;
 
 import org.apache.http.params.HttpParams;
 import org.json.JSONException;
@@ -53,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         String username = ((EditText)findViewById(R.id.txtUsername)).getText().toString();
         String password = ((EditText)findViewById(R.id.txtPassword)).getText().toString();
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (Validator.isEmpty(username, password)) {
             Toast.makeText(getApplicationContext(), "Invalid Login", Toast.LENGTH_LONG).show();
         } else {
             validateLogin(username, password);
@@ -70,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             JSONObject res = new JSONObject(response);
-                            if (!res.getString("response").isEmpty() && res.getString("response").equals(Properties.SUCCESS)) {
+                            if (Validator.isResponseSuccess(res.getString("response"))) {
                                 res = res.getJSONObject("data");
                                 user.setId(res.getInt("id"));
                                 user.setUsername(res.getString("username"));
