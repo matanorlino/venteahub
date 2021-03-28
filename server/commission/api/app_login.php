@@ -15,13 +15,13 @@
     if ($stmt->execute()) {
         $result = $stmt->get_result();
         $data = $result->fetch_assoc();
+        
+        if ($result->num_rows > 0) {
 
-        if (count($data) > 0) {
             $response = new CommonResponse('1',$data,"SUCCESS");
         } else {
             $response = new CommonResponse('0',null,"ERROR");
         }
-
         echo json_encode($response->toJson());
     }
 ?>
