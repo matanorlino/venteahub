@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.MainCustomerActivity"
+            android:name=".ui.MainMenuActivity"
             android:label="@string/title_activity_main_customer"
             android:theme="@style/Theme.VenteaHubMilkTea.NoActionBar">
             <intent-filter>
