@@ -134,6 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
         Intent submitIntent = new Intent("android.intent.action.LOGIN");
         submitIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(submitIntent);
+        finish();
     }
 
 

@@ -113,24 +113,28 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void validateUser(VenteaUser user) {
-        if (user.getAccesslevel().equalsIgnoreCase(Properties.CUSTOMER)) {
-            moveToCustomerMenu();
-        } else if (user.getAccesslevel().equalsIgnoreCase(Properties.DRIVER)) {
-            moveToDriverMenu();
-            Toast.makeText(getApplicationContext(), "Driver", Toast.LENGTH_LONG).show();
+        if (user.getAccesslevel().equalsIgnoreCase(Properties.CUSTOMER) ||
+            user.getAccesslevel().equalsIgnoreCase(Properties.DRIVER)) {
+                moveToMainMenu(user);
         } else {
             Toast.makeText(getApplicationContext(), "Invalid Login", Toast.LENGTH_LONG).show();
         }
     }
 
-    private void moveToCustomerMenu() {
+    private void moveToCustomerMenu(VenteaUser user) {
         // Move to Customer Menu
         Intent mainCustomerIntent = new Intent("android.intent.action.CUSTOMER");
         mainCustomerIntent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+        mainCustomerIntent.putExtra("VenteaUser", user);
         startActivity(mainCustomerIntent);
+        finish();
     }
 
-    private void moveToDriverMenu() {
-
+    private void moveToMainMenu(VenteaUser user) {
+        Intent mainCustomerIntent = new Intent("android.intent.action.CUSTOMER");
+        mainCustomerIntent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+        mainCustomerIntent.putExtra("VenteaUser", user);
+        startActivity(mainCustomerIntent);
+        finish();
     }
 }

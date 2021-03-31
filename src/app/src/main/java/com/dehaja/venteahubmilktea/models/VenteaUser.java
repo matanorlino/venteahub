@@ -1,6 +1,8 @@
 package com.dehaja.venteahubmilktea.models;
 
-public class VenteaUser {
+import java.io.Serializable;
+
+public class VenteaUser implements Serializable {
     private int id;
     private String username;
     private String password;
