@@ -24,4 +24,5 @@
         }
         echo json_encode($response->toJson());
     }
+    $stmt->close();
 ?>
