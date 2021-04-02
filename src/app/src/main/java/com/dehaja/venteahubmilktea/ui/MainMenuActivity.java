@@ -3,7 +3,9 @@ package com.dehaja.venteahubmilktea.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +21,8 @@ import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+
+import org.w3c.dom.Text;
 
 public class MainMenuActivity extends AppCompatActivity {
     private VenteaUser user;
@@ -45,6 +49,9 @@ public class MainMenuActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.user =  (VenteaUser) intent.getSerializableExtra("VenteaUser");
+
+        // Set nav details
+        setNavHeaderInfo(navigationView.getHeaderView(0));
 
         // Set menu items
         navigationView.getMenu().clear();
@@ -85,4 +92,23 @@ public class MainMenuActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    private void setNavHeaderInfo(View nv) {
+        TextView navUsername = nv.findViewById(R.id.navUsername);
+        TextView navContactInfo = nv.findViewById(R.id.navContactInfo);
+
+        navUsername.setText(user.getUsername());
+        navContactInfo.setText(String.format("%s | %s", user.getContact_no(), user.getEmail()));
+    }
+
+    public void onClickLogout(MenuItem item) {
+        // reset/remove value
+        getIntent().removeExtra("VenteaUser");
+        user = null;
+        
+        // Intent declaration
+        Intent logoutIntent = new Intent("android.intent.action.LOGIN");
+        logoutIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(logoutIntent);
+        finish();
+    }
 }

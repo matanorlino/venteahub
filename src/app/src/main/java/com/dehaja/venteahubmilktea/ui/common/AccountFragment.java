@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -134,7 +136,19 @@ public class AccountFragment extends Fragment {
         if (!txtPassword.isEmpty()) {
             user.setPassword(txtPassword.toString());
         }
+        // Update nav header value
+        NavigationView nv = (NavigationView) activity.findViewById(R.id.nav_view);
+        setNavHeaderInfo(nv.getHeaderView(0));
+
         activity.getIntent().removeExtra("VenteaUser");
         activity.getIntent().putExtra("VenteaUser", user);
+    }
+
+    private void setNavHeaderInfo(View nv) {
+        TextView navUsername = nv.findViewById(R.id.navUsername);
+        TextView navContactInfo = nv.findViewById(R.id.navContactInfo);
+
+        navUsername.setText(user.getUsername());
+        navContactInfo.setText(String.format("%s | %s", user.getContact_no(), user.getEmail()));
     }
 }
