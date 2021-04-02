@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2021 at 11:46 AM
--- Server version: 10.1.28-MariaDB
--- PHP Version: 7.1.11
+-- Generation Time: Apr 02, 2021 at 01:13 PM
+-- Server version: 10.4.17-MariaDB
+-- PHP Version: 8.0.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -69,9 +68,9 @@ CREATE TABLE `customer_order` (
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `product_id`, `qty`, `date`) VALUES
 (2, 1, 'unexamined', 'brgy imelda c.c', 'no cheese', '09367953785', 8, 3, '01-31-2020'),
 (3, 1, 'cancel', 'bukid', 'no catsup', '0912312', 8, 1, '01-31-2020'),
-(4, 3, 'wait deliver', 'sa heaven', 'mayo', '09312313', 9, 12, '09-31-2020'),
+(4, 3, 'wait_deliver', 'sa heaven', 'mayo', '09312313', 9, 12, '09-31-2020'),
 (5, 4, 'delivering', 'sa impyerno', 'may mani', '092312318', 7, 1, '01-01-2021'),
-(6, 5, 'wait deliver', 'sa tabing ilog', 'madaming sabaw', '0912313', 9, 23, '01-01-2021'),
+(6, 4, 'wait_deliver', 'sa tabing ilog', 'madaming sabaw', '0912313', 9, 23, '01-01-2021'),
 (7, 3, 'received', 'sa kapitbahay', 'wala', '0938123910', 7, 3, '01-01-2020');
 
 -- --------------------------------------------------------
@@ -129,6 +128,16 @@ CREATE TABLE `order_products` (
   `product_id` int(11) NOT NULL,
   `qty` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `order_products`
+--
+
+INSERT INTO `order_products` (`order_id`, `product_id`, `qty`) VALUES
+(4, 16, 5),
+(4, 15, 3),
+(4, 18, 10),
+(6, 15, 15);
 
 -- --------------------------------------------------------
 
@@ -192,9 +201,39 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `accesslevel`) VALUES
 (1, 'aughus', 'bueno', 'aughusbueno@gmail.com', '09123456789', 'admin'),
 (3, 'jules', 'diego', 'jules@gmail.com', '09123456789', 'admin'),
-(4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', '09123456789', 'admin'),
+(4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', '09123456789', 'customer'),
 (6, 'abc', 'abc', 'rivera@gmail.com', '09123456789', 'customer'),
-(7, '123', '123', '123@123.com', '09123456789', 'driver');
+(7, '123', '123', '123@123.com', '0912 345 678', 'driver'),
+(9, 'kardo', 'kardo', 'kardo@pulis.com', '0911 9119 911', 'driver');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `wait_driver_orders`
+-- (See below for the actual view)
+--
+CREATE TABLE `wait_driver_orders` (
+`user_id` int(11)
+,`username` varchar(255)
+,`order_id` int(11)
+,`product_id` int(11)
+,`product_img` varchar(255)
+,`product_name` varchar(255)
+,`address` varchar(255)
+,`qty` int(11)
+,`sell_price` float
+,`sub_total` double
+,`state` varchar(255)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `wait_driver_orders`
+--
+DROP TABLE IF EXISTS `wait_driver_orders`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
 
 --
 -- Indexes for dumped tables
@@ -210,7 +249,8 @@ ALTER TABLE `category`
 -- Indexes for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  ADD PRIMARY KEY (`order_id`);
+  ADD PRIMARY KEY (`order_id`),
+  ADD KEY `buyer_id` (`buyer_id`);
 
 --
 -- Indexes for table `driver`
@@ -283,11 +323,17 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `customer_order`
+--
+ALTER TABLE `customer_order`
+  ADD CONSTRAINT `customer_order_ibfk_1` FOREIGN KEY (`buyer_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `order_products`

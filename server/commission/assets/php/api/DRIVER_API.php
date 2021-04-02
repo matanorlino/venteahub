@@ -2,17 +2,17 @@
 class driver {
     function getData() {
         require_once('../connector.php');
-        $sql = 'SELECT * FROM driver';
+        $sql = "SELECT * FROM user WHERE accesslevel = 'driver'";
         $result = $conn->query($sql);
         $arr = array();
         $count = 0;
 
         while($c = $result->fetch_assoc()) {
             $arr[$count+=1] = array(
-                'driver_id'   => $c['driver_id'],
-                'driver_name' => $c['driver_name'],
-                'driver_email' => $c['driver_email'],
-                'driver_phone' => $c['driver_phone']
+                'driver_id'   => $c['id'],
+                'driver_name' => $c['username'],
+                'driver_email' => $c['email'],
+                'driver_phone' => $c['contact_no']
             );
         }
 

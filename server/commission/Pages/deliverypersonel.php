@@ -84,11 +84,11 @@
 
             <div id="form">
             <form action="" onsubmit="add_driver()">
-                <label for="cname">Complete Name</label>
-                <input type="text" id="cname" name="" required placeholder="Enter Name">
+                <label for="cname">Username</label>
+                <input type="text" id="cname" name="" required placeholder="Enter Username">
 
                 <label for="phone">Phone</label>
-                <input type="text" id="phone" name="" required placeholder="Enter Phone">
+                <input type="text" class="contact_no" id="phone" name="" required placeholder="09xx xxxx xxx">
 
                 <label for="email">Email</label>
                 <input type="text" id="email" name="" required placeholder="Enter Email"><br><br>
@@ -112,11 +112,11 @@
 
                 <div id="form" class='m_f'>
                     <form action="" onsubmit="">
-                        <label for="cname">Complete Name</label>
-                        <input type="text" id="m_cname" name="" required placeholder="Enter name">
+                        <label for="cname">User Name</label>
+                        <input type="text" id="m_cname" name="" required placeholder="Enter Username" disabled="true">
 
                         <label for="phone">Phone</label>
-                        <input type="text" id="m_phone" name="" required placeholder="Enter Phone">
+                        <input type="text" class="contact_no" id="m_phone" name="" required placeholder="09xx xxxx xxx">
 
                         <label for="email">Email</label>
                         <input type="text" id="m_email" name="" required placeholder="Enter Email"><br><br>
@@ -137,6 +137,14 @@
         <script src="../assets/js/categorymanage.js"></script>
         <script src="../assets/js/driver.js"></script>
         <script src="../assets/js/driver_action.js"></script>
+        <script src="../assets/js/jquery-3.6.0.min.js"></script>
+        <script src="../assets/js/jquery.mask.min.js"></script>
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.contact_no').mask('9999 9999 999');
+            });
+        </script>
         <script>
             document.querySelectorAll('form').forEach((e)=> {
                 e.addEventListener('submit',(ea)=> ea.preventDefault())

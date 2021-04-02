@@ -4,7 +4,7 @@
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $sql = 'SELECT * FROM user';
+    $sql = "SELECT * FROM user WHERE accesslevel='admin'";
 
     if ($res = mysqli_query($conn, $sql)){
         while ($row = mysqli_fetch_assoc($res)) {
