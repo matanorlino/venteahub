@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2021 at 04:45 AM
+-- Generation Time: Apr 02, 2021 at 11:46 AM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.11
 
@@ -155,9 +155,20 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_id`, `product_category_id`, `market_price`, `sell_price`, `product_code`, `product_img`, `model`, `purchase_description`, `product_description`, `status`, `product_name`) VALUES
-(7, 5, 80, 90, 'c0en', 'corndog.jpg', 'daoisj', 'ewan basta hotdog', 'hotdog na ma mais', 'sale', 'corndog'),
-(8, 15, 800, 900, 'p@nc1t', 'pancit.jpg', 'mod123', 'masarap na pancit ', 'pancit na masarap', ' ', 'pancit'),
-(9, 5, 20, 30, 'oiap213', 'bugs.jpg', 'dmasdjib', 'bugs na malinis', 'masarap na bugs', ' ', 'fried bugs');
+(7, 15, 80, 90, 'c0en', 'corndog.jpg', 'daoisj', 'ewan basta hotdog', 'hotdog na ma mais', 'sale', 'corndog'),
+(8, 15, 800, 900, 'p@nc1t', 'pancit.jpg', 'mod123', 'masarap na pancit ', 'pancit na masarap', 'notSale', 'pancit'),
+(9, 17, 20, 30, 'oiap213', 'bugs.jpg', 'dmasdjib', 'bugs na malinis', 'masarap na bugs', ' notSale', 'fried bugs'),
+(10, 6, 100, 100, 'c4ke', 'chococak.jpg', 'asdfsad', 'chocolate cake', 'chocolate cake', 'notSale', 'Chocolate Cake'),
+(11, 5, 80, 79.99, 'ch33se', 'cheesefries.jpg', 'zxcvqwr', 'cheesy fries', 'cheesy fries', 'notSale', 'Cheesy Fries'),
+(12, 15, 35, 29.5, 'kwek2x', 'kwek2x.jpg', '12335', 'orange waffle battered quail eggs', 'orange waffle battered quail eggs 10pcs', 'notSale', 'Kwek Kwek'),
+(13, 6, 150, 150, 'strawc4ke', 'strawberry-cake.jpg', 'asdfsad', 'Strawberry Cake', 'Strawberry Cake', 'notSale', 'Strawberry Cake'),
+(14, 6, 302, 299.75, 's4nz', 'sans-rival-3-1.jpg', 'sans', 'mas masarap pa kesa sa burger machine', 'mas masarap pa kesa sa burger machine', 'notSale', 'Sans Rival'),
+(15, 5, 499, 499, 'p1zz4', 'pizza.jpg', 'pizzzaaa', 'pepperoni pizza', 'pepperoni pizza', 'notSale', 'Pizza'),
+(16, 5, 150, 150, 'buuurgeklasdjf', 'burger.jpg', 'asdfasdf', 'mas cheesy pa sayo', 'mas cheesy pa sayo', 'notSale', 'Cheese Burger'),
+(17, 5, 70, 70, 'spaaag', 'spag.jpeg', 'safdafd', 'spaghetti na masarap', 'spaghetti na masarap', 'notSale', 'Spaghetti'),
+(18, 5, 123, 123, 'chikin', 'chicken.jpg', 'asjdkf', 'hindi jollibee', 'hindi jollibee', NULL, 'Fried Chicken'),
+(19, 5, 900, 900, 'samggg', 'samg.jpg', 'samggg', 'Samgyup sa bahay', 'Samgyup sa bahay', NULL, 'Samgyupsabahay'),
+(20, 5, 33, 33, 'bang', 'daing.jpg', 'asdf', 'bangus galing pangasinan', 'bangus galing pangasinan', NULL, 'Daing na Bangus');
 
 -- --------------------------------------------------------
 
@@ -266,7 +277,7 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `user`
