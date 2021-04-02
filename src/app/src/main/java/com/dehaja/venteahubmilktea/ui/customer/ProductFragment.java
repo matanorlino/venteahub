@@ -39,7 +39,6 @@ public class ProductFragment extends Fragment {
         categories = new ArrayList<>();
         products = new ArrayList<>();
 
-        System.out.println("CATEGORY SIZE INIT: " + categories.size());
         getCategories();
         return root;
     }
@@ -66,7 +65,6 @@ public class ProductFragment extends Fragment {
                                             obj.getString("category_note")
                                     ));
                                 }
-                                System.out.println("CATEGORY SIZE INNER: " + categories.size());
                                 getProducts();
                             }
                         } catch (JSONException e) {
@@ -151,7 +149,6 @@ public class ProductFragment extends Fragment {
 
         ViewPager2 pagerProducts = (ViewPager2) getActivity().findViewById(R.id.pagerProducts);
         pagerProducts.setAdapter(new ProductPagerAdapter(getActivity(), products, categories));
-        System.out.println("setCategoryTab" + products.size());
         new TabLayoutMediator(tabCategories, pagerProducts,
                 new TabLayoutMediator.TabConfigurationStrategy() {
                     @Override

@@ -5,7 +5,9 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,13 +31,11 @@ public class ProductListFragment extends Fragment {
     public ProductListFragment() {}
 
     public static ProductListFragment newInstance(Integer counter, ArrayList<Product> products, ArrayList<ProductCategory> categories) {
-        System.out.println("newInstance");
         ProductListFragment plFragment = new ProductListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COUNTER, counter);
         args.putParcelableArrayList(ARG_PRODUCT, (ArrayList<? extends Parcelable>) products);
         for (Product p : products) {
-            System.out.println("PRODUCT LIST FRAGMENT newInstance: " + p.getProduct_name());
         }
         args.putParcelableArrayList(ARG_CATEGORY, (ArrayList<? extends Parcelable>) categories);
         plFragment.setArguments(args);
@@ -50,7 +50,6 @@ public class ProductListFragment extends Fragment {
             products = getArguments().getParcelableArrayList(ARG_PRODUCT);
             categories = getArguments().getParcelableArrayList(ARG_CATEGORY);
             for (Product p : products) {
-                System.out.println("PRODUCT LIST FRAGMENT onCreate: " + p.getProduct_name());
             }
         }
     }
@@ -63,15 +62,21 @@ public class ProductListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView textView = view.findViewById(R.id.testText);
-        StringBuilder sb = new StringBuilder();
+        ArrayList<Product> categoryProducts = new ArrayList<>();
         for (Product p : products) {
-            sb.append(p.getProduct_name());
-            System.out.println("PRODUCT LIST FRAGMENT FOR LOOP: " + p.getProduct_name());
-            System.out.println("PRODUCT LIST FRAGMENT FOR LOOPsb: " + sb.toString());
+            if (p.getCategory_id() == categories.get(counter).getCategory_id()) {
+                categoryProducts.add(p);
+            }
         }
-        System.out.println("PRODUCT LIST FRAGMENT: " + sb.toString());
-        textView.setText(sb.toString());
-        //content ng tab view
+        ProductViewAdapter adapter = new ProductViewAdapter(getContext(), 0, categoryProducts);
+        ListView listProducts = (ListView) view.findViewById(R.id.listProducts);
+        listProducts.setAdapter(adapter);
+        listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // load item
+                Toast.makeText(view.getContext(), ((Product) adapterView.getItemAtPosition(i)).getProduct_name(), Toast.LENGTH_LONG);
+            }
+        });
     }
 }

@@ -16,7 +16,6 @@ public class ProductPagerAdapter extends FragmentStateAdapter {
     private ArrayList<Product> products;
     public ProductPagerAdapter( @NonNull FragmentActivity fragmentActivity, ArrayList<Product> products, ArrayList<ProductCategory> categories) {
         super(fragmentActivity);
-        System.out.println("ProductPagerAdapter");
         this.products = products;
         this.categories = categories;
     }
@@ -24,7 +23,6 @@ public class ProductPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        System.out.println("createFragment");
         return ProductListFragment.newInstance(position, products, categories);
     }
 
