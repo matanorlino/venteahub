@@ -4,7 +4,7 @@ public class Properties {
     /*
      * Configuration
      */
-    public static final String SERVER_URL = "http://192.168.0.13/VenteaHubMilktea/";
+    public static final String SERVER_URL = "http://192.168.1.28/commission/";
     public static final String ERROR = "0";
     public static final String SUCCESS = "1";
     public static final String DUPLICATE = "2";
@@ -26,9 +26,12 @@ public class Properties {
     // Order was placed but cancelled by the user
     public static final String CANCELLED = "cancelled";
     // Order was placed but the driver has not yet accepted to deliver
-    public static final String WAITING_DRIVER = "wait deliver";
+    public static final String WAITING_DRIVER = "wait_deliver";
+    // Order is being delivered by the driver
+    public static final String DELIVERING = "delivering";
     // Order was delivered and paid
     public static final String RECEIVED = "received";
+
 
 
 }
