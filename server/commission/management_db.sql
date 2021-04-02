@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 27, 2021 at 11:21 AM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 8.0.2
+-- Generation Time: Apr 02, 2021 at 04:45 AM
+-- Server version: 10.1.28-MariaDB
+-- PHP Version: 7.1.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -69,9 +70,9 @@ INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `reque
 (2, 1, 'unexamined', 'brgy imelda c.c', 'no cheese', '09367953785', 8, 3, '01-31-2020'),
 (3, 1, 'cancel', 'bukid', 'no catsup', '0912312', 8, 1, '01-31-2020'),
 (4, 3, 'wait deliver', 'sa heaven', 'mayo', '09312313', 9, 12, '09-31-2020'),
-(5, 4, 'delivered', 'sa impyerno', 'may mani', '092312318', 7, 1, '01-01-2021'),
+(5, 4, 'delivering', 'sa impyerno', 'may mani', '092312318', 7, 1, '01-01-2021'),
 (6, 5, 'wait deliver', 'sa tabing ilog', 'madaming sabaw', '0912313', 9, 23, '01-01-2021'),
-(7, 3, 'recieved', 'sa kapitbahay', 'wala', '0938123910', 7, 3, '01-01-2020');
+(7, 3, 'received', 'sa kapitbahay', 'wala', '0938123910', 7, 3, '01-01-2020');
 
 -- --------------------------------------------------------
 
@@ -155,8 +156,8 @@ CREATE TABLE `product` (
 
 INSERT INTO `product` (`product_id`, `product_category_id`, `market_price`, `sell_price`, `product_code`, `product_img`, `model`, `purchase_description`, `product_description`, `status`, `product_name`) VALUES
 (7, 5, 80, 90, 'c0en', 'corndog.jpg', 'daoisj', 'ewan basta hotdog', 'hotdog na ma mais', 'sale', 'corndog'),
-(8, 13, 800, 900, 'p@nc1t', 'pancit.jpg', 'mod123', 'masarap na pancit ', 'pancit na masarap', NULL, 'pancit'),
-(9, 7, 20, 30, 'oiap213', 'bugs.jpg', 'dmasdjib', 'bugs na malinis', 'masarap na bugs', NULL, 'fried bugs');
+(8, 15, 800, 900, 'p@nc1t', 'pancit.jpg', 'mod123', 'masarap na pancit ', 'pancit na masarap', ' ', 'pancit'),
+(9, 5, 20, 30, 'oiap213', 'bugs.jpg', 'dmasdjib', 'bugs na malinis', 'masarap na bugs', ' ', 'fried bugs');
 
 -- --------------------------------------------------------
 
@@ -181,8 +182,8 @@ INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `access
 (1, 'aughus', 'bueno', 'aughusbueno@gmail.com', '09123456789', 'admin'),
 (3, 'jules', 'diego', 'jules@gmail.com', '09123456789', 'admin'),
 (4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', '09123456789', 'admin'),
-(6, 'rivera', 'rivera', 'rivera@gmail.com', '09123456789', 'admin'),
-(7, '123', '123', '123@123.com', '09123456789', 'admin');
+(6, 'abc', 'abc', 'rivera@gmail.com', '09123456789', 'customer'),
+(7, '123', '123', '123@123.com', '09123456789', 'driver');
 
 --
 -- Indexes for dumped tables
@@ -223,13 +224,15 @@ ALTER TABLE `order_products`
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
-  ADD PRIMARY KEY (`product_id`);
+  ADD PRIMARY KEY (`product_id`),
+  ADD KEY `product_category_id` (`product_category_id`);
 
 --
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -251,7 +254,7 @@ ALTER TABLE `customer_order`
 -- AUTO_INCREMENT for table `driver`
 --
 ALTER TABLE `driver`
-  MODIFY `driver_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `driver_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -269,7 +272,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
@@ -281,6 +284,12 @@ ALTER TABLE `user`
 ALTER TABLE `order_products`
   ADD CONSTRAINT `fk_order_products_customer_order` FOREIGN KEY (`order_id`) REFERENCES `customer_order` (`order_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `product`
+--
+ALTER TABLE `product`
+  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`product_category_id`) REFERENCES `category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
