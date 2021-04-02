@@ -29,29 +29,37 @@
     overflow:auto;
   }
   
-  #myTable {
+  #myTable{
     border-collapse: collapse;
     width: 95%;
     border: 1px solid #ddd;
     font-size: 15px;
     font-family: 'Poppins';
   }
-  
-  #myTable th, #myTable td {
+
+  .order_product {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    font-family: 'Poppins';
+  }
+
+  #myTable th, #myTable td, .order_product th{
     text-align: left;
     padding: 12px;
   }
   
-  #myTable tr {
+  #myTable tr, .order_product tbody tr {
     border-bottom: 1px solid #ddd;
     
   }
   
-  #myTable tr.header {
+  #myTable tr.header , .order_product thead tr.header{
     background-color: rgb(62, 115, 97);
     color: white;
   }
-  #myTable tr:hover {
+  #myTable tr:hover , .order_product tbody tr:hover{
     background-color: #e8e8e9;
     color: black;
   }

@@ -183,3 +183,26 @@ a{
   margin-right: auto;
   padding-top: 5%;
 }
+
+.center {
+  text-align: center;
+}
+
+.modal-footer{
+  width: 100%;
+  margin-top: 15px;
+  border-top: solid black;
+  display: inline-flex;
+  padding: 15px 0;
+}
+
+.col-50 {
+  width: 50% !important;
+  padding: 5px;
+}
+
+.modal-product-img {
+  max-width: 50px;
+  height: auto;
+}
+
