@@ -2,7 +2,7 @@
     require '../assets/php/connector.php';
     require './CommonResponse.php';
 
-    $stmt = $conn->prepare("SELECT * FROM product ORDER BY product_category_id;");
+    $stmt = $conn->prepare("SELECT * FROM product ORDER BY product_category_id, product_name;");
     
     if ($stmt->execute()) {
         $result = $stmt->get_result();
