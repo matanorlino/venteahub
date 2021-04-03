@@ -108,7 +108,7 @@ function get_products(){
                     <td>${product_category}</td>
                     <td>${market_price}</td>
                     <td>${status}</td>
-                    <td>${product_img}</td>
+                    <td><img class="modal-product-img" src="../assets/product_img/${product_img}"></td>
                 </tr>
 
             `;

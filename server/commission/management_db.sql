@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2021 at 01:13 PM
+-- Generation Time: Apr 03, 2021 at 05:10 AM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -67,11 +67,11 @@ CREATE TABLE `customer_order` (
 
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `product_id`, `qty`, `date`) VALUES
 (2, 1, 'unexamined', 'brgy imelda c.c', 'no cheese', '09367953785', 8, 3, '01-31-2020'),
-(3, 1, 'cancel', 'bukid', 'no catsup', '0912312', 8, 1, '01-31-2020'),
+(3, 1, 'cancelled', 'bukid', 'no catsup', '0912312', 8, 1, '01-31-2020'),
 (4, 3, 'wait_deliver', 'sa heaven', 'mayo', '09312313', 9, 12, '09-31-2020'),
 (5, 4, 'delivering', 'sa impyerno', 'may mani', '092312318', 7, 1, '01-01-2021'),
-(6, 4, 'wait_deliver', 'sa tabing ilog', 'madaming sabaw', '0912313', 9, 23, '01-01-2021'),
-(7, 3, 'received', 'sa kapitbahay', 'wala', '0938123910', 7, 3, '01-01-2020');
+(6, 4, 'received', 'sa tabing ilog', 'madaming sabaw', '0912313', 9, 23, '01-01-2021'),
+(7, 3, 'received', 'sa kapitbahay', '', '0938123910', 7, 3, '01-01-2020');
 
 -- --------------------------------------------------------
 
@@ -126,18 +126,19 @@ INSERT INTO `feedback` (`feedback_id`, `product_id`, `user_id`, `feedback_desc`,
 CREATE TABLE `order_products` (
   `order_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
-  `qty` int(11) NOT NULL
+  `qty` int(11) NOT NULL,
+  `request` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `order_products`
 --
 
-INSERT INTO `order_products` (`order_id`, `product_id`, `qty`) VALUES
-(4, 16, 5),
-(4, 15, 3),
-(4, 18, 10),
-(6, 15, 15);
+INSERT INTO `order_products` (`order_id`, `product_id`, `qty`, `request`) VALUES
+(4, 16, 5, ''),
+(4, 15, 3, ''),
+(4, 18, 10, ''),
+(6, 15, 15, '');
 
 -- --------------------------------------------------------
 
@@ -200,9 +201,9 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `accesslevel`) VALUES
 (1, 'aughus', 'bueno', 'aughusbueno@gmail.com', '09123456789', 'admin'),
-(3, 'jules', 'diego', 'jules@gmail.com', '09123456789', 'admin'),
+(3, 'admin', 'admin', 'jules@gmail.com', '09123456789', 'admin'),
 (4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', '09123456789', 'customer'),
-(6, 'abc', 'abc', 'rivera@gmail.com', '09123456789', 'customer'),
+(6, 'luffy', 'luffy', 'captain@onepiece.com', '09123456789', 'customer'),
 (7, '123', '123', '123@123.com', '0912 345 678', 'driver'),
 (9, 'kardo', 'kardo', 'kardo@pulis.com', '0911 9119 911', 'driver');
 
