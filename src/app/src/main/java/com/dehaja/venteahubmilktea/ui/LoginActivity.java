@@ -1,12 +1,17 @@
 package com.dehaja.venteahubmilktea.ui;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -23,6 +28,13 @@ import com.dehaja.venteahubmilktea.util.constants.Validator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
         user = new VenteaUser();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        createConfigFile();
     }
 
     public void registerOnClick(View view) {
@@ -127,5 +141,53 @@ public class LoginActivity extends AppCompatActivity {
         mainCustomerIntent.putExtra("VenteaUser", user);
         startActivity(mainCustomerIntent);
         finish();
+    }
+
+    private void createConfigFile() {
+        String filename = "config.properties";
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getApplicationContext().getPackageName();
+        String packageName = getApplicationContext().getPackageName();
+        String comment = "CONFIG DETAILS \n " +
+                         " scheme -> set to either http or https. Default, http is set. \n" +
+                         " host -> server url or ip address. Default, localhost. \n" +
+                         " port -> api server's port. Default, null. \n" +
+                         " api_server -> api's entry point. Default, commission" ;
+
+        java.util.Properties prop = new java.util.Properties();
+        prop.setProperty("scheme", "http://");
+        prop.setProperty("host", "localhost");
+        prop.setProperty("port", "");
+        prop.setProperty("api_server", "commission");
+
+        File file = new File(getExternalFilesDir(""), "config");
+        try {
+            if (!file.exists()) {
+                if (file.mkdirs()) {
+                    file = new File(getExternalFilesDir("config"), filename);
+                    if (file.createNewFile()) {
+                        FileOutputStream fos = new FileOutputStream(file,true);
+                        prop.store(fos, comment);
+                        fos.close();
+                        setServerUrl(prop);
+                    }
+                }
+            } else {
+                file = new File(getExternalFilesDir("config"), filename);
+                FileInputStream fis = new FileInputStream(file);
+                prop.load(fis);
+                setServerUrl(prop);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setServerUrl(java.util.Properties prop) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(prop.getProperty("scheme"));
+        sb.append(prop.getProperty("host"));
+        sb.append(prop.getProperty("port") == null || prop.getProperty("port").isEmpty() ? "" : ":" + prop.getProperty("port"));
+        sb.append("/" + prop.getProperty("api_server") + "/");
+        System.out.println("SERVER URL: " + sb.toString());
     }
 }
