@@ -12,9 +12,10 @@ import static android.content.Context.*;
 public class CartUtil {
     private Activity activity;
     private SQLiteDatabase db;
+
     public CartUtil (Activity activity) {
         this.activity = activity;
-        SQLiteDatabase db = activity.openOrCreateDatabase("Ventea", MODE_PRIVATE, null);
+        this.db = activity.openOrCreateDatabase("Ventea", MODE_PRIVATE, null);
     }
 
     public Cursor getCart() {
