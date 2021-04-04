@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class CartAdapter extends ArrayAdapter<CartItem> {
@@ -63,6 +64,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
             public void onSuccess(Product p) {
                 product = p;
                 setValues(converview);
+                System.out.println("PRODUCT: " + p.getProduct_name());
             }
         });
 
@@ -76,7 +78,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
 
         btnCartQty.setText(String.valueOf(cartItem.getQuantity()));
         txtCartProductName.setText(product.getProduct_name());
-        txtCartPrice.setText(Properties.PESO_SIGN.concat(String.valueOf(cartItem.getQuantity() * product.getSell_price())));
+        txtCartPrice.setText(Properties.PESO_SIGN.concat(String.format(Locale.US,"%.2f", cartItem.getQuantity() * product.getSell_price())));
     }
 
     private void getProduct(int productId, final VolleyCallback callback) {
