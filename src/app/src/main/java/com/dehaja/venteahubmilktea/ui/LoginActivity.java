@@ -188,6 +188,7 @@ public class LoginActivity extends AppCompatActivity {
         sb.append(prop.getProperty("host"));
         sb.append(prop.getProperty("port") == null || prop.getProperty("port").isEmpty() ? "" : ":" + prop.getProperty("port"));
         sb.append("/" + prop.getProperty("api_server") + "/");
+        Properties.SERVER_URL = sb.toString();
         System.out.println("SERVER URL: " + sb.toString());
     }
 }
