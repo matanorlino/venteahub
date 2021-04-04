@@ -32,6 +32,16 @@ public class Properties {
     // Order was delivered and paid
     public static final String RECEIVED = "received";
 
+    /*
+     * Product View
+     */
+    public static String ADD_TO_CART = "Add to Cart - ";
+    public static String UPDATE_CART = "Update Cart - ";
+    public static String PESO_SIGN = "\u20B1 ";
+    public static String FROM_PRODUCT_LIST = "product_list";
+    public static String FROM_CART = "cart";
+
+
     public void setServerUrl(String url) {
         Properties.SERVER_URL = url;
     }

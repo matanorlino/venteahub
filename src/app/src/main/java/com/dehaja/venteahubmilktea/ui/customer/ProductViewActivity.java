@@ -1,6 +1,7 @@
 package com.dehaja.venteahubmilktea.ui.customer;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -21,9 +22,6 @@ import com.dehaja.venteahubmilktea.util.constants.Properties;
 import java.util.Locale;
 
 public class ProductViewActivity extends AppCompatActivity {
-
-    private static String ADD_TO_CART = "Add to Cart - P ";
-    private static String PESO_SIGN = "P ";
     private VenteaUser user;
     private Product product;
     private float subtotal;
@@ -36,7 +34,7 @@ public class ProductViewActivity extends AppCompatActivity {
     private TextView textProductViewName;
     private TextView textProductViewPrice;
     private TextView textProductViewDescription;
-
+    private String screenFrom;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +42,7 @@ public class ProductViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.product = intent.getParcelableExtra("product");
         this.user = (VenteaUser) intent.getSerializableExtra("VenteaUser");
+        this.screenFrom = intent.getStringExtra("ScreenFrom");
 
         this.buttonMinusQty = (Button) findViewById(R.id.buttonMinusQty);
         this.buttonPlusQty = (Button) findViewById(R.id.buttonPlusQty);
@@ -69,7 +68,7 @@ public class ProductViewActivity extends AppCompatActivity {
                 .into(this.imageProductViewImage);
 
         this.textProductViewName.setText(this.product.getProduct_name());
-        this.textProductViewPrice.setText(PESO_SIGN.concat(String.format(Locale.US, "%.2f", this.product.getSell_price())));
+        this.textProductViewPrice.setText(Properties.PESO_SIGN.concat(String.format(Locale.US, "%.2f", this.product.getSell_price())));
         this.textProductViewDescription.setText(this.product.getProduct_description());
 
         updateSubtotal(1);
@@ -128,17 +127,36 @@ public class ProductViewActivity extends AppCompatActivity {
 
     private void updateSubtotal(int quantity) {
         this.subtotal = quantity * product.getSell_price();
-        this.buttonAddToCart.setText(ADD_TO_CART.concat(String.format(Locale.US, "%.2f", subtotal)));
+        if (this.screenFrom.equalsIgnoreCase(Properties.FROM_CART)) {
+            this.buttonAddToCart.setText(Properties.UPDATE_CART.concat(
+                String.format(Locale.US, "%s %.2f", Properties.PESO_SIGN, subtotal)));
+        } else {
+            this.buttonAddToCart.setText(Properties.ADD_TO_CART.concat(
+                    String.format(Locale.US, "%s %.2f", Properties.PESO_SIGN, subtotal)));
+        }
     }
 
     public void addToCartOnClick(View view) {
         SQLiteDatabase database = openOrCreateDatabase("Ventea", MODE_PRIVATE, null);
         try {
-            database.execSQL(String.format(Locale.US, "INSERT INTO Cart VALUES(%d, %d, %s)",
-                    this.user.getId(),
-                    this.product.getProduct_id(),
-                    this.textQuantity.getText()));
-            Toast.makeText(this, "Successfully added to cart", Toast.LENGTH_LONG).show();
+            // Check if the product is already existing in the cart.
+            Cursor resultSet = database.rawQuery("SELECT * FROM Cart WHERE user_id = ? AND product_id = ?",
+                    new String[] {String.valueOf(this.user.getId()), String.valueOf(this.product.getProduct_id())});
+            if (resultSet.getCount() > 0) {
+                // Update product qty
+                database.execSQL(String.format(Locale.US, "UPDATE Cart SET quantity = %s WHERE user_id = %d AND product_id = %d",
+                        this.textQuantity.getText(),
+                        this.user.getUsername(),
+                        this.product.getProduct_id()));
+                Toast.makeText(this, "Successfully udpated item quantity", Toast.LENGTH_LONG).show();
+            } else {
+                // Add product to cart.
+                database.execSQL(String.format(Locale.US, "INSERT INTO Cart VALUES(%d, %d, %s)",
+                        this.user.getId(),
+                        this.product.getProduct_id(),
+                        this.textQuantity.getText()));
+                Toast.makeText(this, "Successfully added to cart", Toast.LENGTH_LONG).show();
+            }
         } catch (SQLException ex) {
             Toast.makeText(this, "Error adding to cart", Toast.LENGTH_LONG).show();
         }

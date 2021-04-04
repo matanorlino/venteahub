@@ -17,6 +17,7 @@ import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Product;
 import com.dehaja.venteahubmilktea.models.ProductCategory;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
+import com.dehaja.venteahubmilktea.util.constants.Properties;
 
 import java.util.ArrayList;
 
@@ -79,6 +80,7 @@ public class ProductListFragment extends Fragment {
                 Intent intent = new Intent(view.getContext(), ProductViewActivity.class);
                 intent.putExtra("product", (Product) adapterView.getItemAtPosition(i));
                 intent.putExtra("VenteaUser", user);
+                intent.putExtra("ScreenFrom", Properties.FROM_PRODUCT_LIST);
                 startActivity(intent);
             }
         });
