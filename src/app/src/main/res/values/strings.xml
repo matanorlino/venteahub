@@ -35,4 +35,10 @@
     <!-- Strings related to product view -->
     <string name="product_instruction">Special Instruction</string>
     <string name="product_instruction_hint">Eg. No onions please</string>
+
+    <!-- String related to cart -->
+    <string name="order_summary">Order Summary</string>
+    <string name="total">Total</string>
+    <string name="checkout">Checkout</string>
+
 </resources>

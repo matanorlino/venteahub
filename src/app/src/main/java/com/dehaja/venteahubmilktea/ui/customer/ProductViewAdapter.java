@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,7 +34,6 @@ public class ProductViewAdapter extends ArrayAdapter<Product> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_product, parent, false);
         }
 
-        LinearLayout itemProduct = (LinearLayout) convertView.findViewById(R.id.itemProduct); 
         TextView textProductName = (TextView) convertView.findViewById(R.id.textProductName);
         TextView textProductDescription = (TextView) convertView.findViewById(R.id.textProductDescription);
         TextView textProductPrice = (TextView) convertView.findViewById(R.id.textProductPrice);

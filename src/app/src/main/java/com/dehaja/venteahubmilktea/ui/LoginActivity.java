@@ -1,9 +1,6 @@
 package com.dehaja.venteahubmilktea.ui;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -11,7 +8,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -30,11 +26,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void validateLogin(String username, String password) {
         String url = Properties.SERVER_URL + "api/app_login.php";
+        System.out.println("VALIDATE LOGIN: " + url);
         RequestQueue q = Volley.newRequestQueue(this);
         StringRequest jsonObjRequest = new StringRequest(Request.Method.POST,
                 url,

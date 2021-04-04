@@ -77,7 +77,7 @@ public class ProductListFragment extends Fragment {
         listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(view.getContext(), ProductViewActivity.class);
+                Intent intent = new Intent("android.intent.action.PRODUCT_VIEW");
                 intent.putExtra("product", (Product) adapterView.getItemAtPosition(i));
                 intent.putExtra("VenteaUser", user);
                 intent.putExtra("ScreenFrom", Properties.FROM_PRODUCT_LIST);
