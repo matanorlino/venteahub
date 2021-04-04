@@ -5,16 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.CartItem;
-import com.dehaja.venteahubmilktea.models.Product;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
-import com.dehaja.venteahubmilktea.ui.customer.ProductViewAdapter;
 
 import java.util.ArrayList;
 
@@ -54,17 +51,17 @@ public class CartActivity extends AppCompatActivity {
 
     private void populateListView() {
         CartAdapter adapter = new CartAdapter(this, 0, cartItems);
-        ListView listProducts = (ListView) view.findViewById(R.id.listProducts);
+        ListView listProducts = (ListView) findViewById(R.id.listCartItems);
         listProducts.setAdapter(adapter);
-        listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent("android.intent.action.PRODUCT_VIEW");
-                intent.putExtra("product", (Product) adapterView.getItemAtPosition(i));
-                intent.putExtra("VenteaUser", user);
-                startActivity(intent);
-            }
-        });
+//        listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Intent intent = new Intent("android.intent.action.PRODUCT_VIEW");
+//                intent.putExtra("product", (Product) adapterView.getItemAtPosition(i));
+//                intent.putExtra("VenteaUser", user);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public void closeOnClick(View view) {
