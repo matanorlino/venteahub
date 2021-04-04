@@ -2,24 +2,25 @@ package com.dehaja.venteahubmilktea.ui.cart;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.CartItem;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
+import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 
 import java.util.ArrayList;
 
 public class CartActivity extends AppCompatActivity {
 
-    private SQLiteDatabase database;
     private ArrayList<CartItem> cartItems;
     private VenteaUser user;
+    private ListView listProducts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +29,24 @@ public class CartActivity extends AppCompatActivity {
         Intent cartIntent = getIntent();
         user = (VenteaUser) cartIntent.getSerializableExtra("VenteaUser");
 
+        TextView textEmptyCart = (TextView) findViewById(R.id.textEmptyCart);
+        listProducts = (ListView) findViewById(R.id.listCartItems);
+
         loadCart();
-        populateListView();
+        if (cartItems.size() > 0) {
+            textEmptyCart.setVisibility(View.GONE);
+            listProducts.setVisibility(View.VISIBLE);
+            populateListView();
+        } else {
+            listProducts.setVisibility(View.GONE);
+            textEmptyCart.setVisibility(View.VISIBLE);
+        }
     }
 
     private void loadCart() {
         this.cartItems = new ArrayList<>();
-
-        Cursor resultSet = database.rawQuery("SELECT * FROM Cart WHERE user_id = ?",
-                new String[] {String.valueOf(user.getId())});
+        CartUtil cartUtil = CartUtil.getInstance(this);
+        Cursor resultSet = cartUtil.getCart(user.getId());
 
         if (resultSet.moveToFirst()) {
             do {
@@ -51,7 +61,6 @@ public class CartActivity extends AppCompatActivity {
 
     private void populateListView() {
         CartAdapter adapter = new CartAdapter(this, 0, cartItems);
-        ListView listProducts = (ListView) findViewById(R.id.listCartItems);
         listProducts.setAdapter(adapter);
 //        listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -65,6 +74,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     public void closeOnClick(View view) {
+        finish();
     }
 
     public void checkoutOnClick(View view) {

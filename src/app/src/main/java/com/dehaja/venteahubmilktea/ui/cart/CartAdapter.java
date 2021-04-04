@@ -35,8 +35,10 @@ import java.util.Map;
 public class CartAdapter extends ArrayAdapter<CartItem> {
 
     private Button btnCartQty;
+    private CartItem cartItem;
     private TextView txtCartProductName;
     private TextView txtCartPrice;
+    private Product product;
 
     public CartAdapter(@NonNull Context context, int resource, @NonNull ArrayList<CartItem> cartItems) {
         super(context, resource, cartItems);
@@ -45,7 +47,7 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        CartItem cartItem = getItem(position);
+        this.cartItem = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_item_cart, parent, false);
@@ -58,13 +60,18 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         getProduct(cartItem.getProductId(), new VolleyCallback() {
             @Override
             public void onSuccess(Product p) {
-                btnCartQty.setText(cartItem.getQuantity());
-                txtCartProductName.setText(p.getProduct_name());
-                txtCartPrice.setText(Properties.PESO_SIGN.concat(String.valueOf(cartItem.getQuantity() * p.getSell_price())));
+                product = p;
+                setValues();
             }
         });
 
         return convertView;
+    }
+
+    private void setValues() {
+        btnCartQty.setText(String.valueOf(cartItem.getQuantity()));
+        txtCartProductName.setText(product.getProduct_name());
+        txtCartPrice.setText(Properties.PESO_SIGN.concat(String.valueOf(cartItem.getQuantity() * product.getSell_price())));
     }
 
     private void getProduct(int productId, final VolleyCallback callback) {
