@@ -35,12 +35,12 @@ public class Properties {
     /*
      * Product View
      */
-    public static String ADD_TO_CART = "Add to Cart - ";
-    public static String UPDATE_CART = "Update Cart - ";
-    public static String PESO_SIGN = "\u20B1 ";
-    public static String FROM_PRODUCT_LIST = "product_list";
-    public static String FROM_CART = "cart";
-
+    public static final String ADD_TO_CART = "Add to Cart - ";
+    public static final String UPDATE_CART = "Update Cart - ";
+    public static final String PESO_SIGN = "\u20B1 ";
+    public static final String FROM_PRODUCT_LIST = "product_list";
+    public static final String FROM_CART = "cart";
+    public static final String X = "x";
 
     public void setServerUrl(String url) {
         Properties.SERVER_URL = url;
