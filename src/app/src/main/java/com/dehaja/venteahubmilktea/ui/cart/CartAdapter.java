@@ -57,18 +57,23 @@ public class CartAdapter extends ArrayAdapter<CartItem> {
         this.txtCartProductName = (TextView) convertView.findViewById(R.id.txtCartProductName);
         this.txtCartPrice = (TextView) convertView.findViewById(R.id.txtCartPrice);
 
+        final View converview = convertView;
         getProduct(cartItem.getProductId(), new VolleyCallback() {
             @Override
             public void onSuccess(Product p) {
                 product = p;
-                setValues();
+                setValues(converview);
             }
         });
 
         return convertView;
     }
 
-    private void setValues() {
+    private void setValues(View convertView) {
+        Button btnCartQty = (Button) convertView.findViewById(R.id.btnCartQty);
+        TextView txtCartProductName = (TextView) convertView.findViewById(R.id.txtCartProductName);
+        TextView txtCartPrice = (TextView) convertView.findViewById(R.id.txtCartPrice);
+
         btnCartQty.setText(String.valueOf(cartItem.getQuantity()));
         txtCartProductName.setText(product.getProduct_name());
         txtCartPrice.setText(Properties.PESO_SIGN.concat(String.valueOf(cartItem.getQuantity() * product.getSell_price())));

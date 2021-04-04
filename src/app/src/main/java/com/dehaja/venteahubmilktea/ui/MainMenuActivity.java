@@ -18,6 +18,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
+import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.google.android.material.navigation.NavigationView;
 
@@ -72,8 +73,9 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void initializeSQLiteDB() {
-        database = openOrCreateDatabase("Ventea", MODE_PRIVATE, null);
-        database.execSQL("CREATE TABLE IF NOT EXISTS Cart(user_id INT,product_id INT,quantity INT)");
+        CartUtil cart = CartUtil.getInstance(this);
+        cart.dropCartTable();
+        cart.createCartTable();
     }
 
     @Override
