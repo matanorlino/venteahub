@@ -3,6 +3,7 @@ package com.dehaja.venteahubmilktea.util.cart;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Locale;
@@ -24,6 +25,14 @@ public class CartUtil {
     private CartUtil (Activity activity) {
         this.activity = activity;
         this.db = activity.openOrCreateDatabase("Ventea", MODE_PRIVATE, null);
+    }
+
+    public void dropCartTable() {
+        db.execSQL("DROP TABLE IF EXISTS Cart");
+    }
+
+    public void createCartTable() {
+        db.execSQL("CREATE TABLE IF NOT EXISTS Cart(user_id INT, product_id INT, quantity INT, product_name TEXT, product_price FLOAT)");
     }
 
     public Cursor getCart() {
@@ -52,12 +61,18 @@ public class CartUtil {
         return result.getCount() > 0;
     }
 
-    public boolean addToCart(int user_id, int product_id, int qty) {
-        db.execSQL(String.format(Locale.US, "INSERT INTO Cart VALUES(%d, %d, %s)",
+    public boolean addToCart(int user_id, int product_id, int qty, String product_name, float product_price) {
+        try {
+            db.execSQL(String.format(Locale.US,
+                "INSERT INTO Cart VALUES(%d, %d, %s, %s, %f)",
                 user_id,
                 product_id,
-                qty));
-
+                qty,
+                "\'" + product_name + "\'",
+                product_price));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         return isProductExist(user_id, product_id);
     }
 
