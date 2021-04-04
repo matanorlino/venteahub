@@ -31,4 +31,8 @@
     <string name="menu_order_history">Orders</string>
     <string name="menu_account">Account</string>
     <string name="menu_order">Orders</string>
+
+    <!-- Strings related to product view -->
+    <string name="product_instruction">Special Instruction</string>
+    <string name="product_instruction_hint">Eg. No onions please</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.dehaja.venteahubmilktea.ui.customer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -7,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Product;
 import com.dehaja.venteahubmilktea.models.ProductCategory;
+import com.dehaja.venteahubmilktea.models.VenteaUser;
 
 import java.util.ArrayList;
 
@@ -68,14 +69,17 @@ public class ProductListFragment extends Fragment {
                 categoryProducts.add(p);
             }
         }
+        VenteaUser user = (VenteaUser) getActivity().getIntent().getSerializableExtra("VenteaUser");
         ProductViewAdapter adapter = new ProductViewAdapter(getContext(), 0, categoryProducts);
         ListView listProducts = (ListView) view.findViewById(R.id.listProducts);
         listProducts.setAdapter(adapter);
         listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // load item
-                Toast.makeText(view.getContext(), ((Product) adapterView.getItemAtPosition(i)).getProduct_name(), Toast.LENGTH_LONG);
+                Intent intent = new Intent(view.getContext(), ProductViewActivity.class);
+                intent.putExtra("product", (Product) adapterView.getItemAtPosition(i));
+                intent.putExtra("VenteaUser", user);
+                startActivity(intent);
             }
         });
     }
