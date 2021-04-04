@@ -10,10 +10,18 @@ import java.util.Locale;
 import static android.content.Context.*;
 
 public class CartUtil {
+    public static CartUtil instance;
     private Activity activity;
     private SQLiteDatabase db;
 
-    public CartUtil (Activity activity) {
+    public static CartUtil getInstance(Activity activity) {
+        if (instance == null) {
+            instance = new CartUtil(activity);
+        }
+        return instance;
+    }
+
+    private CartUtil (Activity activity) {
         this.activity = activity;
         this.db = activity.openOrCreateDatabase("Ventea", MODE_PRIVATE, null);
     }
@@ -30,7 +38,7 @@ public class CartUtil {
         return result;
     }
 
-    public Cursor getProductCart(int user_id, int product_id) {
+    public Cursor getProduct(int user_id, int product_id) {
         Cursor result = null;
         result = db.rawQuery("SELECT * FROM Cart WHERE user_id = ? AND product_id = ?",
                 new String[] {String.valueOf(user_id), String.valueOf(product_id)});
