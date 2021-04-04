@@ -6,15 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.CartItem;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
-
+import com.dehaja.venteahubmilktea.util.constants.Properties;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CartActivity extends AppCompatActivity {
 
@@ -37,6 +36,7 @@ public class CartActivity extends AppCompatActivity {
             textEmptyCart.setVisibility(View.GONE);
             listProducts.setVisibility(View.VISIBLE);
             populateListView();
+            setTotalText();
         } else {
             listProducts.setVisibility(View.GONE);
             textEmptyCart.setVisibility(View.VISIBLE);
@@ -48,12 +48,16 @@ public class CartActivity extends AppCompatActivity {
         CartUtil cartUtil = CartUtil.getInstance(this);
         Cursor resultSet = cartUtil.getCart(user.getId());
 
+        System.out.println("ResultSet: " + resultSet);
         if (resultSet.moveToFirst()) {
             do {
                 cartItems.add(new CartItem(
                         resultSet.getInt(0), //user_id
                         resultSet.getInt(1), //product_id
-                        resultSet.getInt(2)  //quantity
+                        resultSet.getString(3), // product_name
+                        resultSet.getFloat(4), // product_price
+                        resultSet.getFloat(5), // sell_price
+                        resultSet.getInt(2) //quantity
                 ));
             } while (resultSet.moveToNext());
         }
@@ -71,6 +75,15 @@ public class CartActivity extends AppCompatActivity {
 //                startActivity(intent);
 //            }
 //        });
+    }
+
+    private void setTotalText() {
+        TextView txtTotal = (TextView) findViewById(R.id.textTotal);
+        float total = 0f;
+        for(CartItem item : cartItems) {
+            total += (item.getQuantity() * item.getSellPrice());
+        }
+        txtTotal.setText(String.format(Locale.US, "%s %.2f", Properties.PESO_SIGN, total));
     }
 
     public void closeOnClick(View view) {

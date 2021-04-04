@@ -74,7 +74,6 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private void initializeSQLiteDB() {
         CartUtil cart = CartUtil.getInstance(this);
-        cart.dropCartTable();
         cart.createCartTable();
     }
 

@@ -5,13 +5,15 @@ public class CartItem {
     private int productId;
     private String productName;
     private float productPrice;
+    private float sellPrice;
     private int quantity;
 
-    public CartItem(int userId, int productId, String productName, float productPrice, int quantity) {
+    public CartItem(int userId, int productId, String productName, float productPrice, float sellPrice, int quantity) {
         this.userId = userId;
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
+        this.sellPrice = sellPrice;
         this.quantity = quantity;
     }
 
@@ -54,4 +56,8 @@ public class CartItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public float getSellPrice() { return sellPrice; }
+
+    public void setSellPrice(float sellPrice) { this.sellPrice = sellPrice; }
 }
