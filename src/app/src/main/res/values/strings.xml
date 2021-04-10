@@ -41,4 +41,8 @@
     <string name="total">Total</string>
     <string name="checkout">Checkout</string>
 
+    <!-- String related to driver's order list -->
+    <string name="action_view_order">View Order</string>
+    <string name="action_accept_order">Accept</string>
+
 </resources>

@@ -20,6 +20,7 @@ import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainMenuActivity extends AppCompatActivity {
@@ -41,6 +42,12 @@ public class MainMenuActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.user =  (VenteaUser) intent.getSerializableExtra("VenteaUser");
+
+        if (!this.user.getAccesslevel().equalsIgnoreCase(Properties.CUSTOMER)) {
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setVisibility(View.GONE);
+            fab.hide();
+        }
 
         // Set nav details
         setNavHeaderInfo(navigationView.getHeaderView(0));

@@ -28,15 +28,15 @@
             style="@style/textbox_style"
             android:layout_width="match_parent"
             android:hint="@string/prompt_username"
-            android:text="abc"
-            android:inputType="text" />
+            android:inputType="text"
+            android:text="123" />
 
         <EditText
             android:id="@+id/txtPassword"
             style="@style/textbox_style"
             android:hint="@string/prompt_password"
-            android:text="abc"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:text="123" />
 
         <Button
             android:id="@+id/btnSignin"

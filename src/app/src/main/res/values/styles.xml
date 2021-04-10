@@ -9,5 +9,15 @@
         <item name="android:textAlignment">center</item>
     </style>
 
+    <style name="margin_top_bottom_5dp">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="btn_green">
+        <item name="backgroundColor">#70AD47</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 
 </resources>
