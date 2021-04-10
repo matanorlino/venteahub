@@ -44,5 +44,8 @@
     <!-- String related to driver's order list -->
     <string name="action_view_order">View Order</string>
     <string name="action_accept_order">Accept</string>
+    <string name="action_close">Close</string>
+    <string name="prompt_price">Price:</string>
+    <string name="prompt_qty">Qty:</string>
 
 </resources>

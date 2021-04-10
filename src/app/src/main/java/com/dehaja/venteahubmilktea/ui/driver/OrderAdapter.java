@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Order;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +23,7 @@ import java.util.List;
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
     LayoutInflater inflater;
     List<Order> orders;
-
+    View view;
     public OrderAdapter(Context context, List<Order> order) {
         this.inflater = LayoutInflater.from(context);
         this.orders = order;
@@ -31,7 +32,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.fragment_order_list_item, parent, false);
+        this.view = inflater.inflate(R.layout.fragment_order_list_item, parent, false);
 
         return new ViewHolder(view);
     }
@@ -54,6 +55,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         }
         holder.viewOrder.setOnClickListener(view -> {
             Toast.makeText(view.getContext(),"View Order Id: " + orders.get(position).getOrder_id(), Toast.LENGTH_LONG).show();
+            Snackbar snackbar = Snackbar.make(this.view, "Test Snackbar", Snackbar.LENGTH_INDEFINITE);
+            snackbar.show();
         });
 
         holder.acceptOrder.setOnClickListener(view -> {
