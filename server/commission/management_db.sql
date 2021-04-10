@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 03, 2021 at 05:10 AM
+-- Generation Time: Apr 10, 2021 at 11:15 AM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -56,22 +56,23 @@ CREATE TABLE `customer_order` (
   `address` varchar(255) NOT NULL,
   `request` varchar(255) NOT NULL,
   `phone` varchar(255) NOT NULL,
-  `product_id` int(11) NOT NULL,
   `qty` int(11) NOT NULL,
-  `date` varchar(255) NOT NULL
+  `date` datetime NOT NULL,
+  `delivered_by` int(11) NOT NULL DEFAULT 0,
+  `date_delivered` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `customer_order`
 --
 
-INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `product_id`, `qty`, `date`) VALUES
-(2, 1, 'unexamined', 'brgy imelda c.c', 'no cheese', '09367953785', 8, 3, '01-31-2020'),
-(3, 1, 'cancelled', 'bukid', 'no catsup', '0912312', 8, 1, '01-31-2020'),
-(4, 3, 'wait_deliver', 'sa heaven', 'mayo', '09312313', 9, 12, '09-31-2020'),
-(5, 4, 'delivering', 'sa impyerno', 'may mani', '092312318', 7, 1, '01-01-2021'),
-(6, 4, 'received', 'sa tabing ilog', 'madaming sabaw', '0912313', 9, 23, '01-01-2021'),
-(7, 3, 'received', 'sa kapitbahay', '', '0938123910', 7, 3, '01-01-2020');
+INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `date`, `delivered_by`, `date_delivered`) VALUES
+(2, 6, 'wait_deliver', 'jan lang', 'wala naman', '', 0, '2021-04-07 22:55:00', 0, NULL),
+(3, 4, 'wait_deliver', 'jan lang', 'wala naman', '', 0, '2021-04-01 22:55:07', 0, NULL),
+(4, 1, 'wait_deliver', 'dito lang', '', '', 0, '2021-04-10 02:12:16', 0, NULL),
+(5, 1, 'wait_deliver', 'dito lang', '', '', 0, '2021-04-10 02:12:16', 0, NULL),
+(6, 6, 'wait_deliver', 'thousand sunny', '', '', 0, '2021-04-10 02:13:32', 0, NULL),
+(7, 6, 'wait_deliver', 'thousan sunny', '', '', 0, '2021-04-10 02:13:32', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -135,10 +136,17 @@ CREATE TABLE `order_products` (
 --
 
 INSERT INTO `order_products` (`order_id`, `product_id`, `qty`, `request`) VALUES
-(4, 16, 5, ''),
-(4, 15, 3, ''),
-(4, 18, 10, ''),
-(6, 15, 15, '');
+(2, 20, 10, ''),
+(2, 7, 5, ''),
+(3, 13, 1, ''),
+(4, 12, 4, 'wala naman'),
+(4, 10, 5, ''),
+(5, 13, 6, 'anim'),
+(5, 17, 8, ''),
+(6, 16, 13, ''),
+(6, 19, 13, ''),
+(7, 18, 15, ''),
+(7, 8, 16, '');
 
 -- --------------------------------------------------------
 
@@ -200,10 +208,11 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `accesslevel`) VALUES
-(1, 'aughus', 'bueno', 'aughusbueno@gmail.com', '09123456789', 'admin'),
+(0, 'initial', 'initial', 'initial@initial.com', '', 'initial'),
+(1, 'aughus', 'bueno', 'aughusbueno@gmail.com', '09123456789', 'customer'),
 (3, 'admin', 'admin', 'jules@gmail.com', '09123456789', 'admin'),
-(4, 'raffy', 'sumbungan', 'raffytulfoinaction@gmail.com', '09123456789', 'customer'),
-(6, 'luffy', 'luffy', 'captain@onepiece.com', '09123456789', 'customer'),
+(4, 'abc', 'abc', 'raffytulfoinaction@gmail.com', '0912 3456 789', 'customer'),
+(6, 'luffy', 'luffy', 'futurepirateking@onepiece.com', '0912 3456 789', 'customer'),
 (7, '123', '123', '123@123.com', '0912 345 678', 'driver'),
 (9, 'kardo', 'kardo', 'kardo@pulis.com', '0911 9119 911', 'driver');
 
@@ -216,6 +225,8 @@ INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `access
 CREATE TABLE `wait_driver_orders` (
 `user_id` int(11)
 ,`username` varchar(255)
+,`contact_no` varchar(15)
+,`date` datetime
 ,`order_id` int(11)
 ,`product_id` int(11)
 ,`product_img` varchar(255)
@@ -234,7 +245,7 @@ CREATE TABLE `wait_driver_orders` (
 --
 DROP TABLE IF EXISTS `wait_driver_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
 
 --
 -- Indexes for dumped tables
@@ -251,7 +262,9 @@ ALTER TABLE `category`
 --
 ALTER TABLE `customer_order`
   ADD PRIMARY KEY (`order_id`),
-  ADD KEY `buyer_id` (`buyer_id`);
+  ADD KEY `buyer_id` (`buyer_id`),
+  ADD KEY `product_id` (`delivered_by`),
+  ADD KEY `delivered_by` (`delivered_by`);
 
 --
 -- Indexes for table `driver`
@@ -324,7 +337,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
@@ -334,14 +347,15 @@ ALTER TABLE `user`
 -- Constraints for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  ADD CONSTRAINT `customer_order_ibfk_1` FOREIGN KEY (`buyer_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `customer_order_ibfk_1` FOREIGN KEY (`buyer_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `customer_order_ibfk_2` FOREIGN KEY (`delivered_by`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `order_products`
 --
 ALTER TABLE `order_products`
-  ADD CONSTRAINT `fk_order_products_customer_order` FOREIGN KEY (`order_id`) REFERENCES `customer_order` (`order_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `order_products_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `customer_order` (`order_id`);
 
 --
 -- Constraints for table `product`
