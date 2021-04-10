@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -46,15 +47,21 @@ public class OrderFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_order, container, false);
 
         recyclerView = root.findViewById(R.id.recOrderList);
+        loadInit(null);
 
-        // Get order list from API
-        orders = new ArrayList<>();
-        getOrderList(getContext());
+        SwipeRefreshLayout refreshLayout = root.findViewById(R.id.swipeLayout);
+        refreshLayout.setOnRefreshListener(() -> {
+            loadInit(refreshLayout);
+        });
 
         return root;
     }
-
-    private void getOrderList(Context context) {
+    private void loadInit(SwipeRefreshLayout refreshLayout) {
+        // Get order list from API
+        orders = new ArrayList<>();
+        getOrderList(getContext(), refreshLayout);
+    }
+    private void getOrderList(Context context, SwipeRefreshLayout refreshLayout) {
         String url = Properties.SERVER_URL + "api/App_Get_Wait_Driver.php";
         RequestQueue q = Volley.newRequestQueue(context);
         StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
@@ -84,6 +91,10 @@ public class OrderFragment extends Fragment {
                                 recyclerView.setLayoutManager(layoutManager);
                                 orderAdapter = new OrderAdapter(getContext(), orders);
                                 recyclerView.setAdapter(orderAdapter);
+
+                                if(refreshLayout != null) {
+                                    refreshLayout.setRefreshing(false);
+                                }
                             } else {
                                 Toast.makeText(getContext(), "Failed to load Order list", Toast.LENGTH_LONG).show();
                             }
