@@ -56,11 +56,13 @@ public class OrderFragment extends Fragment {
 
         return root;
     }
+
     private void loadInit(SwipeRefreshLayout refreshLayout) {
         // Get order list from API
         orders = new ArrayList<>();
         getOrderList(getContext(), refreshLayout);
     }
+
     private void getOrderList(Context context, SwipeRefreshLayout refreshLayout) {
         String url = Properties.SERVER_URL + "api/App_Get_Wait_Driver.php";
         RequestQueue q = Volley.newRequestQueue(context);
@@ -111,5 +113,11 @@ public class OrderFragment extends Fragment {
                     }
         });
         q.add(jsonObjRequest);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.loadInit(null);
     }
 }

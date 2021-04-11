@@ -99,7 +99,7 @@
             android:id="@+id/txtOrderViewRequest"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:editable="false"
+            android:editable="true"
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine"

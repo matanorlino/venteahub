@@ -1,6 +1,7 @@
 package com.dehaja.venteahubmilktea.ui.driver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Order;
+import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -47,21 +49,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             String formattedDate = new SimpleDateFormat(datePattern).format(parsedDate);
             System.out.println("Formatted Date: " + formattedDate);
             holder.cardAddress.setText(orders.get(position).getAddress());
-            holder.cardContactNo.setText(orders.get(position).getContant_no());
+            holder.cardContactNo.setText(orders.get(position).getContact_no());
             holder.cardDate.setText(formattedDate.toUpperCase());
             holder.cardTotal.setText(String.format("%s %.2f", Properties.PESO_SIGN, orders.get(position).getTotal()));
+            holder.viewOrder.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
+            holder.acceptOrder.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.viewOrder.setOnClickListener(view -> {
-            Toast.makeText(view.getContext(),"View Order Id: " + orders.get(position).getOrder_id(), Toast.LENGTH_LONG).show();
-            Snackbar snackbar = Snackbar.make(this.view, "Test Snackbar", Snackbar.LENGTH_INDEFINITE);
-            snackbar.show();
-        });
-
-        holder.acceptOrder.setOnClickListener(view -> {
-            Toast.makeText(view.getContext(),"Accept Order Id: " + orders.get(position).getOrder_id(), Toast.LENGTH_LONG).show();
-        });
     }
 
     @Override

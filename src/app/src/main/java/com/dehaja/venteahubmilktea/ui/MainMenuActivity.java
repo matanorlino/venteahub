@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -123,4 +124,12 @@ public class MainMenuActivity extends AppCompatActivity {
         cartIntent.putExtra("VenteaUser", user);
         startActivity(cartIntent);
     }
+
+    public void onClickViewOrder(View view) {
+        Intent viewOrderIntent = new Intent("android.intent.action.ORDER_VIEW");
+        viewOrderIntent.putExtra("order_id", Integer.parseInt(view.getContentDescription().toString()));
+        viewOrderIntent.putExtra("VenteaUser", user);
+        startActivity(viewOrderIntent);
+    }
+
 }

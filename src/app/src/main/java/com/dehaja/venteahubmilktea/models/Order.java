@@ -1,22 +1,22 @@
 package com.dehaja.venteahubmilktea.models;
 
-import java.util.Date;
+import java.io.Serializable;
 
-public class Order {
+public class Order implements Serializable {
     private int order_id;
     private String address;
     private int user_id;
     private String username;
-    private String contant_no;
+    private String contact_no;
     private String date;
     private float total;
 
-    public Order(int order_id, int user_id, String address, String username, String contant_no, String date, float total) {
+    public Order(int order_id, int user_id, String address, String username, String contact_no, String date, float total) {
         this.order_id = order_id;
         this.address = address;
         this.user_id = user_id;
         this.username = username;
-        this.contant_no = contant_no;
+        this.contact_no = contact_no;
         this.date = date;
         this.total = total;
     }
@@ -53,12 +53,12 @@ public class Order {
         this.username = username;
     }
 
-    public String getContant_no() {
-        return contant_no;
+    public String getContact_no() {
+        return contact_no;
     }
 
-    public void setContant_no(String contant_no) {
-        this.contant_no = contant_no;
+    public void setContact_no(String contact_no) {
+        this.contact_no = contact_no;
     }
 
     public String getDate() { return date; }
