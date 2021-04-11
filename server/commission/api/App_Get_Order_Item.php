@@ -2,8 +2,12 @@
     require '../assets/php/connector.php';
     require './CommonResponse.php';
 
-    $stmt = $conn->prepare("SELECT order_id, user_id, address, username, contact_no, date, SUM(qty * sell_price) AS total FROM wait_driver_orders GROUP BY order_id ORDER BY date DESC");
-    
+    if (isset($_GET['order_id'])) {
+        $order_id = $_GET['order_id'];
+    }
+
+    $stmt = $conn->prepare("SELECT * FROM wait_driver_orders WHERE order_id=?");
+    $stmt->bind_param('i', $order_id);
     if ($stmt->execute()) {
         $result = $stmt->get_result();
         
