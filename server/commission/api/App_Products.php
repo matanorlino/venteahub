@@ -8,7 +8,7 @@
         $stmt = $conn->prepare("SELECT * FROM product WHERE product_id=? ORDER BY product_category_id, product_name;");
         $stmt->bind_param('i', $product_id);
     } else {
-        $stmt = $conn->prepare("SELECT * FROM product ORDER BY product_category_id, product_name;");
+        $stmt = $conn->prepare("SELECT * FROM product ORDER BY product_category_id, product_code;");
     }
     
     if ($stmt->execute()) {
