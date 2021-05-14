@@ -7,21 +7,37 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Product;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+import com.dehaja.venteahubmilktea.util.constants.Validator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class ProductViewActivity extends AppCompatActivity {
     private VenteaUser user;
-    private Product product;
     private float subtotal;
     private Button buttonMinusQty;
     private Button buttonPlusQty;
@@ -31,17 +47,90 @@ public class ProductViewActivity extends AppCompatActivity {
     private TextView textProductViewName;
     private TextView textProductViewPrice;
     private TextView textProductViewDescription;
-    private String screenFrom;
+    private RadioGroup radioProductModels;
+    private Product selectedModel;
+    private boolean isExistingInCart;
+    private String productCode;
+    private int productId;
+    private ArrayList<Product> models;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_view);
-        Intent intent = getIntent();
-        this.product = intent.getParcelableExtra("product");
-        this.user = (VenteaUser) intent.getSerializableExtra("VenteaUser");
-        this.screenFrom = intent.getStringExtra("ScreenFrom");
 
+        models = new ArrayList<>();
+        Intent intent = getIntent();
+        this.user = (VenteaUser) intent.getSerializableExtra("VenteaUser");
+        this.productCode = intent.getStringExtra("product_code");
+        this.productId = intent.getIntExtra("product_id", 0);
+
+        getProduct();
+    }
+
+    private void getProduct() {
+        String url = Properties.SERVER_URL + "api/App_Products.php?";
+
+        if (productId != 0) {
+            url = url.concat("product_id=" + productId);
+            Button btnRemove = (Button) findViewById(R.id.btnRemove);
+            btnRemove.setVisibility(View.VISIBLE);
+        } else if (productCode != null && !productCode.isEmpty()) {
+            url = url.concat("product_code=" + productCode);
+        }
+        RequestQueue q = Volley.newRequestQueue(this);
+
+        StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject res = new JSONObject(response);
+                            if (Validator.isResponseSuccess(res.getString("response"))) {
+                                JSONArray data = res.getJSONArray("data");
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject obj = data.getJSONObject(i);
+                                    if (obj != null) {
+                                        Product product = new Product();
+                                        product.setProduct_id(obj.getInt("product_id"));
+                                        product.setCategory_id(obj.getInt("product_category_id"));
+                                        product.setMarket_price(Float.parseFloat(obj.getString("market_price")));
+                                        product.setSell_price(Float.parseFloat(obj.getString("sell_price")));
+                                        product.setProduct_code(obj.getString("product_code"));
+                                        product.setProduct_img(obj.getString("product_img"));
+                                        product.setModel(obj.getString("model"));
+                                        product.setPurchase_description(obj.getString("purchase_description"));
+                                        product.setProduct_description(obj.getString("product_description"));
+                                        product.setStatus(obj.getString("status"));
+                                        product.setProduct_name(obj.getString("product_name"));
+                                        models.add(product);
+                                    }
+                                }
+                            }
+                            initializeContent();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+
+        }
+        ) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
+
+        q.add(jsonObjRequest);
+    }
+
+    private void initializeContent() {
         this.buttonMinusQty = (Button) findViewById(R.id.buttonMinusQty);
         this.buttonPlusQty = (Button) findViewById(R.id.buttonPlusQty);
         this.buttonAddToCart = (Button) findViewById(R.id.buttonAddToCart);
@@ -50,14 +139,39 @@ public class ProductViewActivity extends AppCompatActivity {
         this.textProductViewPrice = (TextView) findViewById(R.id.textProductViewPrice);
         this.textProductViewDescription = (TextView) findViewById(R.id.textProductViewDescription);
         this.textQuantity = (TextView) findViewById(R.id.textQuantity);
+        this.radioProductModels = (RadioGroup) findViewById(R.id.radioProductModels);
+        this.isExistingInCart = false;
 
+        initializeRadioGroup();
         initialize();
     }
 
-    private void initialize() {
-        setQuantity(1);
+    private void initializeRadioGroup() {
+        for (Product model : models) {
+            RadioButton rbModel = new RadioButton(this);
+            rbModel.setText(model.getModel());
+            rbModel.setId(View.generateViewId());
 
-        String imgUrl = Properties.SERVER_URL + "/assets/product_img/" + this.product.getProduct_img();
+            RadioGroup.LayoutParams radioGroupLayout = new RadioGroup.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+            this.radioProductModels.addView(rbModel, radioGroupLayout);
+        }
+        this.radioProductModels.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int id) {
+                for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                    if (radioGroup.getChildAt(i).getId() == id) {
+                        selectedModel = models.get(i);
+                        initialize();
+                        break;
+                    }
+                }
+            }
+        });
+        ((RadioButton)radioProductModels.getChildAt(0)).setChecked(true);
+    }
+
+    private void initialize() {
+        String imgUrl = Properties.SERVER_URL + "/assets/product_img/" + this.selectedModel.getProduct_img();
         Glide.with(this)
                 .load(imgUrl)
                 .placeholder(R.mipmap.banner)
@@ -65,27 +179,29 @@ public class ProductViewActivity extends AppCompatActivity {
                 .centerCrop()
                 .into(this.imageProductViewImage);
 
-        this.textProductViewName.setText(this.product.getProduct_name());
-        this.textProductViewPrice.setText(Properties.PESO_SIGN.concat(String.format(Locale.US, "%.2f", this.product.getSell_price())));
-        this.textProductViewDescription.setText(this.product.getProduct_description());
+        this.textProductViewName.setText(this.selectedModel.getProduct_name());
+        this.textProductViewPrice.setText(Properties.PESO_SIGN.concat(String.format(Locale.US, "%.2f", this.selectedModel.getSell_price())));
+        this.textProductViewDescription.setText(this.selectedModel.getProduct_description());
 
         CartUtil cart = CartUtil.getInstance(this);
-        if (cart.isProductExist(user.getId(), product.getProduct_id())) {
+        isExistingInCart = cart.isProductExist(user.getId(), selectedModel.getProduct_id());
+
+        if (isExistingInCart) {
             loadCartDetails();
         } else {
-            updateSubtotal(1);
+            setQuantity(1);
         }
-
     }
 
     private void loadCartDetails() {
         CartUtil cart = CartUtil.getInstance(this);
         // Check if product is existing in cart
-        if (cart.isProductExist(user.getId(), product.getProduct_id())) {
-            Cursor resultSet = cart.getProduct(user.getId(), product.getProduct_id());
+
+        if (isExistingInCart) {
+            Cursor resultSet = cart.getProduct(user.getId(), selectedModel.getProduct_id());
             // get product qty from cart then multiply to sell price
             int qty = getProductQtyFromCart(resultSet);
-            this.subtotal = qty * product.getSell_price();
+            this.subtotal = qty * selectedModel.getSell_price();
             this.buttonAddToCart.setText(Properties.UPDATE_CART.concat(
                     String.format(Locale.US, "%s %.2f", Properties.PESO_SIGN, subtotal)));
             this.textQuantity.setText(String.valueOf(qty));
@@ -147,8 +263,8 @@ public class ProductViewActivity extends AppCompatActivity {
     }
 
     private void updateSubtotal(int quantity) {
-        this.subtotal = quantity * product.getSell_price();
-        if (this.screenFrom.equalsIgnoreCase(Properties.FROM_CART)) {
+        this.subtotal = quantity * selectedModel.getSell_price();
+        if (isExistingInCart) {
             this.buttonAddToCart.setText(Properties.UPDATE_CART.concat(
                 String.format(Locale.US, "%s %.2f", Properties.PESO_SIGN, subtotal)));
         } else {
@@ -171,19 +287,32 @@ public class ProductViewActivity extends AppCompatActivity {
         CartUtil cart = CartUtil.getInstance(this);
         try {
             int user_id = user.getId();
-            int product_id = product.getProduct_id();
+            int product_id = selectedModel.getProduct_id();
             int qty = Integer.parseInt(textQuantity.getText().toString());
-            String product_name = product.getProduct_name();
-            float product_price = product.getSell_price();
-            float sell_price = product.getSell_price();
-            if (cart.isProductExist(user.getId(), product.getProduct_id())) {
+            String product_name = selectedModel.getProduct_name();
+            float product_price = selectedModel.getSell_price();
+            float sell_price = selectedModel.getSell_price();
+            String model = selectedModel.getModel();
+            if (cart.isProductExist(user.getId(), selectedModel.getProduct_id())) {
                 // Update product qty
                 cart.updateProduct(user_id, product_id, qty);
-                Toast.makeText(this, "Successfully udpated item quantity", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Successfully updated item quantity", Toast.LENGTH_LONG).show();
+
+                // Back to cart
+                if (productId != 0) {
+                    Intent cartIntent = new Intent("android.intent.action.CART");
+                    cartIntent.putExtra("VenteaUser", user);
+                    startActivity(cartIntent);
+                    setResult(1);
+                    super.onStop();
+                    finish();
+                }
             } else {
                 // Add to cart
-                if (cart.addToCart(user_id, product_id, qty, product_name, product_price, sell_price)) {
+                if (cart.addToCart(user_id, product_id, qty, product_name, product_price, sell_price, model)) {
                     Toast.makeText(this, "Successfully added to cart", Toast.LENGTH_LONG).show();
+                    isExistingInCart = true;
+                    setQuantity(qty);
                 } else {
                     Toast.makeText(this, "Error adding to cart", Toast.LENGTH_LONG).show();
                 }
@@ -194,7 +323,22 @@ public class ProductViewActivity extends AppCompatActivity {
         }
     }
 
+    public void btnRemoveOnClick(View view) {
+        CartUtil cart = CartUtil.getInstance(this);
+        cart.removeProduct(user.getId(), selectedModel.getProduct_id(), selectedModel.getModel());
+        Toast.makeText(this, "Successfully removed item from cart", Toast.LENGTH_LONG).show();
+
+        // Back to cart
+        Intent cartIntent = new Intent("android.intent.action.CART");
+        cartIntent.putExtra("VenteaUser", user);
+        startActivity(cartIntent);
+        setResult(1);
+        super.onStop();
+        finish();
+    }
+
     public void closeOnClick(View view) {
         finish();
     }
+
 }

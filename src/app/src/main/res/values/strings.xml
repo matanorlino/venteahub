@@ -41,6 +41,8 @@
     <string name="order_summary">Order Summary</string>
     <string name="total">Total</string>
     <string name="checkout">Checkout</string>
+    <string name="remove_cart">Remove From Cart</string>
+    <string name="cart_empty">Cart Empty</string>
 
     <!-- String related to driver's order list -->
     <string name="action_view_order">View Order</string>

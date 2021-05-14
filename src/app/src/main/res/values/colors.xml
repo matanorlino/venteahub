@@ -10,7 +10,8 @@
     <color name="gray">#FF555555</color>
     <color name="med_gray">#FFAAAAAA</color>
     <color name="light_gray">#FFF5F5F5</color>
-    <color name="green">#70AD47</color>
-    <color name="light_yellow">#FFDB96</color>
-    <color name="light_green">#7FBAA4</color>
+    <color name="green">#FF70AD47</color>
+    <color name="light_yellow">#FFFFDB96</color>
+    <color name="light_green">#FF7FBAA4</color>
+    <color name="light_red">#FFC55050</color>
 </resources>

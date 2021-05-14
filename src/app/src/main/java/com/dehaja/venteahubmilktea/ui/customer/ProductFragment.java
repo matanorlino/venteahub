@@ -103,20 +103,19 @@ public class ProductFragment extends Fragment {
                                 for (int i = 0; i < data.length(); i++) {
                                     JSONObject obj = data.getJSONObject(i);
                                     if (obj != null) {
-                                        System.out.println("getProducts");
-                                        products.add(new Product(
-                                                obj.getInt("product_id"),
-                                                obj.getInt("product_category_id"),
-                                                Float.parseFloat(obj.getString("market_price")),
-                                                Float.parseFloat(obj.getString("sell_price")),
-                                                obj.getString("product_code"),
-                                                obj.getString("product_img"),
-                                                obj.getString("model"),
-                                                obj.getString("purchase_description"),
-                                                obj.getString("product_description"),
-                                                obj.getString("status"),
-                                                obj.getString("product_name")
-                                        ));
+                                        Product product = new Product();
+                                        product.setProduct_id(obj.getInt("product_id"));
+                                        product.setCategory_id(obj.getInt("product_category_id"));
+                                        product.setMarket_price(Float.parseFloat(obj.getString("market_price")));
+                                        product.setSell_price(Float.parseFloat(obj.getString("sell_price")));
+                                        product.setProduct_code(obj.getString("product_code"));
+                                        product.setProduct_img(obj.getString("product_img"));
+                                        product.setModel(obj.getString("model"));
+                                        product.setPurchase_description(obj.getString("purchase_description"));
+                                        product.setProduct_description(obj.getString("product_description"));
+                                        product.setStatus(obj.getString("status"));
+                                        product.setProduct_name(obj.getString("product_name"));
+                                        products.add(product);
                                     }
                                 }
                                 setCategoryTab();

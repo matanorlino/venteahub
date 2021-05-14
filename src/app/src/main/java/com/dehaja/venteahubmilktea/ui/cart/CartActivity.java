@@ -4,14 +4,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.CartItem;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -57,7 +62,8 @@ public class CartActivity extends AppCompatActivity {
                         resultSet.getString(3), // product_name
                         resultSet.getFloat(4), // product_price
                         resultSet.getFloat(5), // sell_price
-                        resultSet.getInt(2) //quantity
+                        resultSet.getInt(2), //quantity
+                        resultSet.getString(6) //model
                 ));
             } while (resultSet.moveToNext());
         }
@@ -66,15 +72,15 @@ public class CartActivity extends AppCompatActivity {
     private void populateListView() {
         CartAdapter adapter = new CartAdapter(this, 0, cartItems);
         listProducts.setAdapter(adapter);
-//        listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent("android.intent.action.PRODUCT_VIEW");
-//                intent.putExtra("product", (Product) adapterView.getItemAtPosition(i));
-//                intent.putExtra("VenteaUser", user);
-//                startActivity(intent);
-//            }
-//        });
+        listProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent("android.intent.action.PRODUCT_VIEW");
+                intent.putExtra("product_id", ((CartItem) adapterView.getItemAtPosition(i)).getProductId());
+                intent.putExtra("VenteaUser", user);
+                startActivityForResult(intent,1);
+            }
+        });
     }
 
     private void setTotalText() {
@@ -91,5 +97,15 @@ public class CartActivity extends AppCompatActivity {
     }
 
     public void checkoutOnClick(View view) {
+        CartUtil cart = CartUtil.getInstance(this);
+        cart.clearCart(user.getId());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == 1) {
+            finish();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

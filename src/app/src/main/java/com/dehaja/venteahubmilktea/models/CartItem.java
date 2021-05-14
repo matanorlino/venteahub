@@ -7,14 +7,16 @@ public class CartItem {
     private float productPrice;
     private float sellPrice;
     private int quantity;
+    private String model;
 
-    public CartItem(int userId, int productId, String productName, float productPrice, float sellPrice, int quantity) {
+    public CartItem(int userId, int productId, String productName, float productPrice, float sellPrice, int quantity, String model) {
         this.userId = userId;
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
         this.sellPrice = sellPrice;
         this.quantity = quantity;
+        this.model = model;
     }
 
     public int getUserId() {
@@ -60,4 +62,8 @@ public class CartItem {
     public float getSellPrice() { return sellPrice; }
 
     public void setSellPrice(float sellPrice) { this.sellPrice = sellPrice; }
+
+    public String getModel() { return model; }
+
+    public void setModel(String model) { this.model = model; }
 }

@@ -17,7 +17,6 @@ import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Product;
 import com.dehaja.venteahubmilktea.models.ProductCategory;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
-import com.dehaja.venteahubmilktea.util.constants.Properties;
 
 import java.util.ArrayList;
 
@@ -51,8 +50,6 @@ public class ProductListFragment extends Fragment {
             counter = getArguments().getInt(ARG_COUNTER);
             products = getArguments().getParcelableArrayList(ARG_PRODUCT);
             categories = getArguments().getParcelableArrayList(ARG_CATEGORY);
-            for (Product p : products) {
-            }
         }
     }
 
@@ -65,9 +62,16 @@ public class ProductListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ArrayList<Product> categoryProducts = new ArrayList<>();
+
+        String lastProductCode = null;
         for (Product p : products) {
             if (p.getCategory_id() == categories.get(counter).getCategory_id()) {
-                categoryProducts.add(p);
+                if (lastProductCode == null || !p.getProduct_code().equals(lastProductCode)) {
+                    categoryProducts.add(p);
+                    lastProductCode = p.getProduct_code();
+                } else {
+                    lastProductCode = p.getProduct_code();
+                }
             }
         }
         VenteaUser user = (VenteaUser) getActivity().getIntent().getSerializableExtra("VenteaUser");
@@ -78,9 +82,8 @@ public class ProductListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent("android.intent.action.PRODUCT_VIEW");
-                intent.putExtra("product", (Product) adapterView.getItemAtPosition(i));
                 intent.putExtra("VenteaUser", user);
-                intent.putExtra("ScreenFrom", Properties.FROM_PRODUCT_LIST);
+                intent.putExtra("product_code", ((Product) adapterView.getItemAtPosition(i)).getProduct_code());
                 startActivity(intent);
             }
         });

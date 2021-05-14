@@ -106,9 +106,7 @@ public class Product implements Parcelable {
         this.product_img = product_img;
     }
 
-    public String getModel() {
-        return model;
-    }
+    public String getModel() { return model; }
 
     public void setModel(String model) {
         this.model = model;
