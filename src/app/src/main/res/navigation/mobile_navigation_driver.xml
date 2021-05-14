@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_order" />
 
     <fragment
+        android:id="@+id/nav_delivery"
+        android:name="com.dehaja.venteahubmilktea.ui.common.DeliveryMapsFragment"
+        android:label="@string/menu_delivery"
+        tools:layout="@layout/fragment_delivery_maps" />
+
+    <fragment
         android:id="@+id/nav_account"
         android:name="com.dehaja.venteahubmilktea.ui.common.AccountFragment"
         android:label="@string/menu_account"

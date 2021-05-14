@@ -1,6 +1,7 @@
 package com.dehaja.venteahubmilktea.util.constants;
 
 public class Properties {
+    public static String TITLE = "Ventea Hub Milktea";
     /*
      * Configuration
      */
@@ -41,6 +42,11 @@ public class Properties {
     public static final String FROM_PRODUCT_LIST = "product_list";
     public static final String FROM_CART = "cart";
     public static final String X = "x";
+
+    /*
+     * Map Key
+     */
+    public static String MAP_API_KEY = "AIzaSyDNYt-tL60_OdNJwDPTl_7KSM-Kmyxslos";
 
     public void setServerUrl(String url) {
         Properties.SERVER_URL = url;

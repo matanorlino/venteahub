@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void createConfigFile() {
         String filename = "config.properties";
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getApplicationContext().getPackageName();
+        String path = Environment.getDataDirectory().getAbsolutePath() + "/" + getApplicationContext().getPackageName();
         String packageName = getApplicationContext().getPackageName();
         String comment = "CONFIG DETAILS \n " +
                          " scheme -> set to either http or https. Default, http is set. \n" +

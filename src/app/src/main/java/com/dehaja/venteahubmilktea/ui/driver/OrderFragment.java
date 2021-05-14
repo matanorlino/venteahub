@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Order;
+import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
 
@@ -38,21 +40,22 @@ import java.util.List;
 import java.util.Map;
 
 public class OrderFragment extends Fragment {
-    RecyclerView recyclerView;
-    List<Order> orders;
-    OrderAdapter orderAdapter;
+    private RecyclerView recyclerView;
+    private List<Order> orders;
+    private OrderAdapter orderAdapter;
+    private VenteaUser user;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_order, container, false);
 
+        user = (VenteaUser) getActivity().getIntent().getSerializableExtra("VenteaUser");
         recyclerView = root.findViewById(R.id.recOrderList);
+
         loadInit(null);
 
-        SwipeRefreshLayout refreshLayout = root.findViewById(R.id.swipeLayout);
-        refreshLayout.setOnRefreshListener(() -> {
-            loadInit(refreshLayout);
-        });
+        SwipeRefreshLayout refreshLayout = root.findViewById(R.id.fragment_order_layout);
+        refreshLayout.setOnRefreshListener(() -> loadInit(refreshLayout));
 
         return root;
     }
@@ -75,6 +78,7 @@ public class OrderFragment extends Fragment {
                             JSONObject res = new JSONObject(response);
                             if (Validator.isResponseSuccess(res.getString("response"))) {
                                 JSONArray data = res.getJSONArray("data");
+                                orders.clear();
                                 for (int i = 0; i < data.length(); i++) {
                                     JSONObject obj = data.getJSONObject(i);
                                     orders.add(new Order(
@@ -119,5 +123,9 @@ public class OrderFragment extends Fragment {
     public void onResume() {
         super.onResume();
         this.loadInit(null);
+    }
+
+    public void closeOnClick(View view) {
+        this.onResume();
     }
 }

@@ -12,20 +12,33 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Order;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+import com.dehaja.venteahubmilktea.util.constants.Validator;
 import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
-    LayoutInflater inflater;
-    List<Order> orders;
-    View view;
+    private LayoutInflater inflater;
+    private List<Order> orders;
+    private View view;
     public OrderAdapter(Context context, List<Order> order) {
         this.inflater = LayoutInflater.from(context);
         this.orders = order;
@@ -59,6 +72,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         }
     }
 
+
+
     @Override
     public int getItemCount() {
         return orders.size();
@@ -70,9 +85,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     }
 
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView cardAddress;
-//        TextView cardUsername;
+//      TextView cardUsername;
         TextView cardContactNo;
         TextView cardDate;
         TextView cardTotal;
@@ -88,6 +104,5 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             viewOrder = itemView.findViewById(R.id.btnCardViewOrder);
             acceptOrder = itemView.findViewById(R.id.btnCardAccept);
         }
-
     }
 }

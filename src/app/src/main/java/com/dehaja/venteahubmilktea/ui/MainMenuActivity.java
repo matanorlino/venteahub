@@ -12,17 +12,35 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
+import com.dehaja.venteahubmilktea.ui.driver.OrderFragment;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
+import com.dehaja.venteahubmilktea.util.constants.Validator;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainMenuActivity extends AppCompatActivity {
     private VenteaUser user;
@@ -67,7 +85,7 @@ public class MainMenuActivity extends AppCompatActivity {
         } else {
             navigationView.inflateMenu(R.menu.activity_main_drawer_driver);
             mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_order, R.id.nav_account)
+                    R.id.nav_order, R.id.nav_delivery, R.id.nav_account)
                     .setDrawerLayout(drawer)
                     .build();
 
@@ -130,6 +148,57 @@ public class MainMenuActivity extends AppCompatActivity {
         viewOrderIntent.putExtra("order_id", Integer.parseInt(view.getContentDescription().toString()));
         viewOrderIntent.putExtra("VenteaUser", user);
         startActivity(viewOrderIntent);
+    }
+
+    public void acceptOnClick(View view) {
+        String url = Properties.SERVER_URL + "api/App_Update_Order_Status.php";
+        int order_id = Integer.parseInt(String.valueOf(view.getContentDescription()));
+        RequestQueue q = Volley.newRequestQueue(getApplicationContext());
+        StringRequest jsonObjRequest = new StringRequest(Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            System.out.println("response: " + response);
+                            JSONObject res = new JSONObject(response);
+
+                            if (Validator.isResponseSuccess(res.getString("response"))) {
+                                String msg = String.format("Order status has been updated to %s", Properties.DELIVERING);
+                                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                // move to maps
+
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Error accepting order", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            Toast.makeText(getApplicationContext(), "Error accepting order", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Invalid Login", Toast.LENGTH_LONG).show();
+                error.printStackTrace();
+            }
+        }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", String.valueOf(user.getId()));
+                params.put("state", Properties.DELIVERING);
+                params.put("order_id", String.valueOf(order_id));
+                return params;
+            }
+        };
+        q.add(jsonObjRequest);
     }
 
 }

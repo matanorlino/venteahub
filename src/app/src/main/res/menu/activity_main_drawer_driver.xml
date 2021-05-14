@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_order" />
         <item
+            android:id="@+id/nav_delivery"
+            android:icon="@drawable/ic_baseline_map"
+            android:title="@string/menu_delivery" />
+        <item
             android:id="@+id/nav_account"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_account" />
