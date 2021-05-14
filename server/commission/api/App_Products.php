@@ -7,6 +7,10 @@
         $product_id = $_GET['product_id'];
         $stmt = $conn->prepare("SELECT * FROM product WHERE product_id=? ORDER BY product_category_id, product_name;");
         $stmt->bind_param('i', $product_id);
+    } else if (isset(($_GET['product_code']))){
+        $product_code = $_GET['product_code'];
+        $stmt = $conn->prepare("SELECT * FROM product WHERE product_code=?;");
+        $stmt->bind_param('s',$product_code);
     } else {
         $stmt = $conn->prepare("SELECT * FROM product ORDER BY product_category_id, product_code;");
     }
