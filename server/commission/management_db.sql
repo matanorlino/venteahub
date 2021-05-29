@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2021 at 11:39 AM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 8.0.2
+-- Generation Time: May 29, 2021 at 04:07 PM
+-- Server version: 10.1.28-MariaDB
+-- PHP Version: 7.1.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -49,7 +50,7 @@ INSERT INTO `category` (`category_id`, `category_name`, `category_note`) VALUES
 --
 
 CREATE TABLE `customer_order` (
-  `order_id` int(11) NOT NULL,
+  `order_id` int(20) NOT NULL,
   `buyer_id` int(11) NOT NULL,
   `state` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
@@ -57,7 +58,7 @@ CREATE TABLE `customer_order` (
   `phone` varchar(255) NOT NULL,
   `qty` int(11) NOT NULL,
   `date` datetime NOT NULL,
-  `delivered_by` int(11) NOT NULL DEFAULT 0,
+  `delivered_by` int(11) NOT NULL DEFAULT '0',
   `date_delivered` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -115,23 +116,33 @@ INSERT INTO `feedback` (`feedback_id`, `product_id`, `user_id`, `feedback_desc`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `gcash_information`
+--
+
+CREATE TABLE `gcash_information` (
+  `number` varchar(11) NOT NULL,
+  `name` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `gcash_information`
+--
+
+INSERT INTO `gcash_information` (`number`, `name`) VALUES
+('09123456789', 'Juan dela Cruz');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `order_products`
 --
 
 CREATE TABLE `order_products` (
-  `order_id` int(11) NOT NULL,
+  `order_id` int(20) NOT NULL,
   `product_id` int(11) NOT NULL,
   `qty` int(11) NOT NULL,
   `request` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `order_products`
---
-
-INSERT INTO `order_products` (`order_id`, `product_id`, `qty`, `request`) VALUES
-(1, 1, 1, 'straw po'),
-(1, 6, 5, 'straw po');
 
 -- --------------------------------------------------------
 
@@ -215,7 +226,7 @@ CREATE TABLE `wait_driver_orders` (
 ,`username` varchar(255)
 ,`contact_no` varchar(15)
 ,`date` datetime
-,`order_id` int(11)
+,`order_id` int(20)
 ,`product_id` int(11)
 ,`product_img` varchar(255)
 ,`product_name` varchar(255)
@@ -234,7 +245,7 @@ CREATE TABLE `wait_driver_orders` (
 --
 DROP TABLE IF EXISTS `wait_driver_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS  select `user`.`id` AS `user_id`,`user`.`username` AS `username`,`user`.`contact_no` AS `contact_no`,`co`.`date` AS `date`,`co`.`order_id` AS `order_id`,`op`.`product_id` AS `product_id`,`prod`.`product_img` AS `product_img`,`prod`.`product_name` AS `product_name`,`co`.`address` AS `address`,`op`.`qty` AS `qty`,`prod`.`sell_price` AS `sell_price`,(`prod`.`sell_price` * `op`.`qty`) AS `sub_total`,`co`.`state` AS `state`,`op`.`request` AS `request` from (((`order_products` `op` left join `customer_order` `co` on((`op`.`order_id` = `co`.`order_id`))) left join `product` `prod` on((`op`.`product_id` = `prod`.`product_id`))) left join `user` on((`co`.`buyer_id` = `user`.`id`))) where (`co`.`state` = 'wait_deliver') ;
 
 --
 -- Indexes for dumped tables
@@ -268,6 +279,12 @@ ALTER TABLE `feedback`
   ADD PRIMARY KEY (`feedback_id`);
 
 --
+-- Indexes for table `gcash_information`
+--
+ALTER TABLE `gcash_information`
+  ADD PRIMARY KEY (`number`);
+
+--
 -- Indexes for table `order_products`
 --
 ALTER TABLE `order_products`
@@ -297,12 +314,6 @@ ALTER TABLE `user`
 --
 ALTER TABLE `category`
   MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
--- AUTO_INCREMENT for table `customer_order`
---
-ALTER TABLE `customer_order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `driver`
@@ -344,7 +355,7 @@ ALTER TABLE `customer_order`
 --
 ALTER TABLE `order_products`
   ADD CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `order_products_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `customer_order` (`order_id`);
+  ADD CONSTRAINT `order_products_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `customer_order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `product`
