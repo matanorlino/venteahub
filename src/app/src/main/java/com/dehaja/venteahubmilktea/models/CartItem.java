@@ -1,6 +1,9 @@
 package com.dehaja.venteahubmilktea.models;
 
-public class CartItem {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class CartItem implements Parcelable {
     private int userId;
     private int productId;
     private String productName;
@@ -18,6 +21,28 @@ public class CartItem {
         this.quantity = quantity;
         this.model = model;
     }
+
+    protected CartItem(Parcel in) {
+        userId = in.readInt();
+        productId = in.readInt();
+        productName = in.readString();
+        productPrice = in.readFloat();
+        sellPrice = in.readFloat();
+        quantity = in.readInt();
+        model = in.readString();
+    }
+
+    public static final Creator<CartItem> CREATOR = new Creator<CartItem>() {
+        @Override
+        public CartItem createFromParcel(Parcel in) {
+            return new CartItem(in);
+        }
+
+        @Override
+        public CartItem[] newArray(int size) {
+            return new CartItem[size];
+        }
+    };
 
     public int getUserId() {
         return userId;
@@ -66,4 +91,19 @@ public class CartItem {
     public String getModel() { return model; }
 
     public void setModel(String model) { this.model = model; }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(userId);
+        parcel.writeInt(productId);
+        parcel.writeString(productName);
+        parcel.writeFloat(productPrice);
+        parcel.writeFloat(sellPrice);
+        parcel.writeInt(quantity);
+    }
 }

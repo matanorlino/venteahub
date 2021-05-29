@@ -25,6 +25,7 @@ public class CartActivity extends AppCompatActivity {
     private ArrayList<CartItem> cartItems;
     private VenteaUser user;
     private ListView listProducts;
+    private float total = 0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +86,6 @@ public class CartActivity extends AppCompatActivity {
 
     private void setTotalText() {
         TextView txtTotal = (TextView) findViewById(R.id.textTotal);
-        float total = 0f;
         for(CartItem item : cartItems) {
             total += (item.getQuantity() * item.getSellPrice());
         }
@@ -97,8 +97,11 @@ public class CartActivity extends AppCompatActivity {
     }
 
     public void checkoutOnClick(View view) {
-        CartUtil cart = CartUtil.getInstance(this);
-        cart.clearCart(user.getId());
+        Intent checkoutIntent = new Intent("android.intent.action.CHECKOUT_VIEW");
+        checkoutIntent.putExtra("VenteaUser", user);
+        checkoutIntent.putExtra("total", total);
+        checkoutIntent.putExtra("cartItems", cartItems);
+        startActivityForResult(checkoutIntent, 1);
     }
 
     @Override

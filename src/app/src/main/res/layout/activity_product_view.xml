@@ -69,7 +69,7 @@
                     android:layout_gravity="end"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="P 100.00"
+                    android:text="₱ 0.00"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
             </LinearLayout>

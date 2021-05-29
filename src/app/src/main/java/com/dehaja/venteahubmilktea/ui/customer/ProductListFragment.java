@@ -36,8 +36,6 @@ public class ProductListFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt(ARG_COUNTER, counter);
         args.putParcelableArrayList(ARG_PRODUCT, (ArrayList<? extends Parcelable>) products);
-        for (Product p : products) {
-        }
         args.putParcelableArrayList(ARG_CATEGORY, (ArrayList<? extends Parcelable>) categories);
         plFragment.setArguments(args);
         return plFragment;
