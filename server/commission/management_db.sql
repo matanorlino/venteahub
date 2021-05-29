@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2021 at 11:15 AM
+-- Generation Time: May 29, 2021 at 11:39 AM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -40,8 +40,7 @@ CREATE TABLE `category` (
 INSERT INTO `category` (`category_id`, `category_name`, `category_note`) VALUES
 (5, 'food', 'delicious'),
 (6, 'sweet', 'yummy!'),
-(15, 'junk foods', 'not healthy for kids'),
-(17, 'soup', 'Mushroom');
+(18, 'Milk Tea', 'Milk na Tea, Tea na Milk');
 
 -- --------------------------------------------------------
 
@@ -67,12 +66,7 @@ CREATE TABLE `customer_order` (
 --
 
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `date`, `delivered_by`, `date_delivered`) VALUES
-(2, 6, 'wait_deliver', 'jan lang', 'wala naman', '', 0, '2021-04-07 22:55:00', 0, NULL),
-(3, 4, 'wait_deliver', 'jan lang', 'wala naman', '', 0, '2021-04-01 22:55:07', 0, NULL),
-(4, 1, 'wait_deliver', 'dito lang', '', '', 0, '2021-04-10 02:12:16', 0, NULL),
-(5, 1, 'wait_deliver', 'dito lang', '', '', 0, '2021-04-10 02:12:16', 0, NULL),
-(6, 6, 'wait_deliver', 'thousand sunny', '', '', 0, '2021-04-10 02:13:32', 0, NULL),
-(7, 6, 'wait_deliver', 'thousan sunny', '', '', 0, '2021-04-10 02:13:32', 0, NULL);
+(1, 4, 'wait_deliver', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-05-13 13:50:24');
 
 -- --------------------------------------------------------
 
@@ -136,17 +130,8 @@ CREATE TABLE `order_products` (
 --
 
 INSERT INTO `order_products` (`order_id`, `product_id`, `qty`, `request`) VALUES
-(2, 20, 10, ''),
-(2, 7, 5, ''),
-(3, 13, 1, ''),
-(4, 12, 4, 'wala naman'),
-(4, 10, 5, ''),
-(5, 13, 6, 'anim'),
-(5, 17, 8, ''),
-(6, 16, 13, ''),
-(6, 19, 13, ''),
-(7, 18, 15, ''),
-(7, 8, 16, '');
+(1, 1, 1, 'straw po'),
+(1, 6, 5, 'straw po');
 
 -- --------------------------------------------------------
 
@@ -164,7 +149,7 @@ CREATE TABLE `product` (
   `model` varchar(255) NOT NULL,
   `purchase_description` varchar(255) NOT NULL,
   `product_description` varchar(255) NOT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT 'notSale',
   `product_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -173,20 +158,21 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_id`, `product_category_id`, `market_price`, `sell_price`, `product_code`, `product_img`, `model`, `purchase_description`, `product_description`, `status`, `product_name`) VALUES
-(7, 15, 80, 90, 'c0en', 'corndog.jpg', 'daoisj', 'ewan basta hotdog', 'hotdog na ma mais', 'sale', 'corndog'),
-(8, 15, 800, 900, 'p@nc1t', 'pancit.jpg', 'mod123', 'masarap na pancit ', 'pancit na masarap', 'notSale', 'pancit'),
-(9, 17, 20, 30, 'oiap213', 'bugs.jpg', 'dmasdjib', 'bugs na malinis', 'masarap na bugs', ' notSale', 'fried bugs'),
-(10, 6, 100, 100, 'c4ke', 'chococak.jpg', 'asdfsad', 'chocolate cake', 'chocolate cake', 'notSale', 'Chocolate Cake'),
-(11, 5, 80, 79.99, 'ch33se', 'cheesefries.jpg', 'zxcvqwr', 'cheesy fries', 'cheesy fries', 'notSale', 'Cheesy Fries'),
-(12, 15, 35, 29.5, 'kwek2x', 'kwek2x.jpg', '12335', 'orange waffle battered quail eggs', 'orange waffle battered quail eggs 10pcs', 'notSale', 'Kwek Kwek'),
-(13, 6, 150, 150, 'strawc4ke', 'strawberry-cake.jpg', 'asdfsad', 'Strawberry Cake', 'Strawberry Cake', 'notSale', 'Strawberry Cake'),
-(14, 6, 302, 299.75, 's4nz', 'sans-rival-3-1.jpg', 'sans', 'mas masarap pa kesa sa burger machine', 'mas masarap pa kesa sa burger machine', 'notSale', 'Sans Rival'),
-(15, 5, 499, 499, 'p1zz4', 'pizza.jpg', 'pizzzaaa', 'pepperoni pizza', 'pepperoni pizza', 'notSale', 'Pizza'),
-(16, 5, 150, 150, 'buuurgeklasdjf', 'burger.jpg', 'asdfasdf', 'mas cheesy pa sayo', 'mas cheesy pa sayo', 'notSale', 'Cheese Burger'),
-(17, 5, 70, 70, 'spaaag', 'spag.jpeg', 'safdafd', 'spaghetti na masarap', 'spaghetti na masarap', 'notSale', 'Spaghetti'),
-(18, 5, 123, 123, 'chikin', 'chicken.jpg', 'asjdkf', 'hindi jollibee', 'hindi jollibee', NULL, 'Fried Chicken'),
-(19, 5, 900, 900, 'samggg', 'samg.jpg', 'samggg', 'Samgyup sa bahay', 'Samgyup sa bahay', NULL, 'Samgyupsabahay'),
-(20, 5, 33, 33, 'bang', 'daing.jpg', 'asdf', 'bangus galing pangasinan', 'bangus galing pangasinan', NULL, 'Daing na Bangus');
+(1, 18, 80, 80, 'HKKD', 'boba.jpg', 'S', 'Hokkaido Milktea', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'notSale', 'Hokkaido Milk Tea'),
+(2, 18, 90, 90, 'HKKD', 'boba.jpg', 'M', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'notSale', 'Hokkaido Milk Tea'),
+(3, 18, 100, 100, 'HKKD', 'boba.jpg', 'L', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'notSale', 'Hokkaido Milk Tea'),
+(4, 18, 80, 80, 'WNTRMLN', 'ph_bubble_tea_diy.jpg', 'S', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'notSale', 'Wintermelon'),
+(5, 18, 90, 90, 'WNTRMLN', 'ph_bubble_tea_diy.jpg', 'M', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'notSale', 'Wintermelon'),
+(6, 18, 100, 100, 'WNTRMLN', 'ph_bubble_tea_diy.jpg', 'L', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...', 'notSale', 'Wintermelon'),
+(7, 5, 90, 90, 'KRCD', 'plain-corndog.jpg', 'Plain', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Korean Corndog'),
+(8, 5, 90, 90, 'KRCD', 'potato-corndog.jpg', 'Potato', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Korean Corndog'),
+(9, 5, 300, 300, 'CKNWNG', 'buffalo-wings.jpg', 'Buffalo', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Chicken Wings'),
+(10, 5, 300, 300, 'CKNWNG', 'garlic-parm-wings.jpg', 'Garlic Parmesan', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Chicken Wings'),
+(11, 5, 300, 300, 'CKNWNG', 'korean-wings.jpg', 'Korean', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Chicken Wings'),
+(12, 6, 150, 150, 'CHSCK', 'classic-cheesecake.jpg', 'Classic', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake'),
+(13, 6, 150, 150, 'CHSCK', 'strawberry-cheesecake.jpg', 'Strawberry', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake'),
+(14, 6, 150, 150, 'CHSCK', 'oreo-cheesecake.jpg', 'Oreo', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake'),
+(15, 6, 150, 150, 'CHSCK', 'mango-cheesecake.jpg', 'Mango', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake');
 
 -- --------------------------------------------------------
 
@@ -213,8 +199,10 @@ INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `access
 (3, 'admin', 'admin', 'jules@gmail.com', '09123456789', 'admin'),
 (4, 'abc', 'abc', 'raffytulfoinaction@gmail.com', '0912 3456 789', 'customer'),
 (6, 'luffy', 'luffy', 'futurepirateking@onepiece.com', '0912 3456 789', 'customer'),
-(7, '123', '123', '123@123.com', '0912 345 678', 'driver'),
-(9, 'kardo', 'kardo', 'kardo@pulis.com', '0911 9119 911', 'driver');
+(7, '123', '123', '123@123.com', '0912 3456 789', 'driver'),
+(9, 'kardo', 'kardo', 'kardo@pulis.com', '0911 9119 911', 'driver'),
+(11, 'new', 'new', 'new@new.com', '', 'admin'),
+(12, 'qwe', 'qwe', 'qwe', '0912 3456 789', 'customer');
 
 -- --------------------------------------------------------
 
@@ -236,6 +224,7 @@ CREATE TABLE `wait_driver_orders` (
 ,`sell_price` float
 ,`sub_total` double
 ,`state` varchar(255)
+,`request` text
 );
 
 -- --------------------------------------------------------
@@ -245,7 +234,7 @@ CREATE TABLE `wait_driver_orders` (
 --
 DROP TABLE IF EXISTS `wait_driver_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
 
 --
 -- Indexes for dumped tables
@@ -307,13 +296,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `driver`
@@ -331,13 +320,13 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
