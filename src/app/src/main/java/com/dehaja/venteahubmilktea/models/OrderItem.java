@@ -15,6 +15,7 @@ public class OrderItem {
     private float sub_total;
     private String state;
     private String request;
+    private int delivered_by;
 
     public OrderItem(int user_id, int order_id, int product_id, String username, String contact_no, String date, String product_img, String product_name, String address, int qty, float sell_price, float sub_total, String state, String request) {
         this.user_id = user_id;
@@ -31,6 +32,24 @@ public class OrderItem {
         this.sub_total = sub_total;
         this.state = state;
         this.request = request;
+    }
+
+    public OrderItem(int user_id, int order_id, int product_id, String username, String contact_no, String date, String product_img, String product_name, String address, int qty, float sell_price, float sub_total, String state, String request, int delivered_by) {
+        this.user_id = user_id;
+        this.order_id = order_id;
+        this.product_id = product_id;
+        this.username = username;
+        this.contact_no = contact_no;
+        this.date = date;
+        this.product_img = product_img;
+        this.product_name = product_name;
+        this.address = address;
+        this.qty = qty;
+        this.sell_price = sell_price;
+        this.sub_total = sub_total;
+        this.state = state;
+        this.request = request;
+        this.delivered_by = delivered_by;
     }
 
     public String getRequest() {
@@ -144,4 +163,8 @@ public class OrderItem {
     public void setState(String state) {
         this.state = state;
     }
+
+    public int getDelivered_by() { return delivered_by; }
+
+    public void setDelivered_by(int delivered_by) { this.delivered_by = delivered_by; }
 }

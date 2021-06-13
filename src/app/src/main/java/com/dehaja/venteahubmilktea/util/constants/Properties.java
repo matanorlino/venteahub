@@ -32,6 +32,8 @@ public class Properties {
     public static final String DELIVERING = "delivering";
     // Order was delivered and paid
     public static final String RECEIVED = "received";
+    // Other driver tries to update status
+    public static final String CANNOT_UPDATE_BY_DRIVER = "Cannot update delivery status of other personnel";
 
     /*
      * Product View

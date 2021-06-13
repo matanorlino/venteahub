@@ -64,4 +64,8 @@
     <string name="order_no_label_placeholder">Order number: </string>
     <string name="order_no_placeholder">1210529081732</string>
 
+    <!-- String related to Maps   -->
+    <string name="action_cancel_order">Cancel</string>
+    <string name="action_delivered">Delivered</string>
+    <string name="text_no_delivery">You have no delivery in progress.</string>
 </resources>

@@ -24,14 +24,14 @@
             android:layout_width="match_parent"
             android:hint="@string/prompt_username"
             android:inputType="text"
-            android:text="abc" />
+            android:text="123" />
 
         <EditText
             android:id="@+id/txtPassword"
             style="@style/textbox_style"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:text="abc" />
+            android:text="123" />
 
         <Button
             android:id="@+id/btnSignin"

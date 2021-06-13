@@ -15,7 +15,8 @@
         android:id="@+id/nav_delivery"
         android:name="com.dehaja.venteahubmilktea.ui.common.DeliveryMapsFragment"
         android:label="@string/menu_delivery"
-        tools:layout="@layout/fragment_delivery_maps" />
+        tools:layout="@layout/fragment_for_delivery"
+        />
 
     <fragment
         android:id="@+id/nav_account"
