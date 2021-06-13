@@ -87,6 +87,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
     private Button btnMapCancel;
     private Button btnMapDelivered;
     private TextView txtMapNoRecord;
+    private SupportMapFragment mapFragment;
 
     private boolean hasNoRecord = false;
 
@@ -114,7 +115,9 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
 //            map.moveCamera(CameraUpdateFactory.newLatLng(venteaLoc));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(venteeaBounds.getCenter(), 15));
             DeliveryMapsFragment.this.map = map;
-            if (!hasNoRecord) {
+            if (hasNoRecord) {
+                DeliveryMapsFragment.this.map.clear();
+            } else {
                 getMyLocation();
             }
         }
@@ -131,22 +134,25 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         btnMapCancel = root.findViewById(R.id.btnMapCancel);
         btnMapDelivered = root.findViewById(R.id.btnMapDelivered);
         txtMapNoRecord = root.findViewById(R.id.txtMapNoRecord);
+
         getToDeliverOrder(getContext());
+
         return root;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             if (hasNoRecord) {
-                mapFragment.onDestroy();
-
+                mapFragment.getView().setVisibility(View.INVISIBLE);
             } else {
+                mapFragment.getView().setVisibility(View.VISIBLE);
+                txtMapNoRecord.setVisibility(View.INVISIBLE);
+                btnMapCancel.setVisibility(View.VISIBLE);
+                btnMapDelivered.setVisibility(View.VISIBLE);
                 mapFragment.getMapAsync(callback);
-
             }
         }
     }
@@ -246,6 +252,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
 
     }
 
+    // SPF ALGO
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
@@ -316,13 +323,14 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                             JSONObject res = new JSONObject(response);
                             if (Validator.isResponseSuccess(res.getString("response"))) {
                                 JSONArray data = res.getJSONArray("data");
-                                if (data == null || data.length() < 1) {
+                                System.out.println("[data]: " + data);
+                                if (data.length() < 1) {
                                     txtMapNoRecord.setVisibility(View.VISIBLE);
                                     hasNoRecord = true;
                                 }
                                 for (int i = 0; i < data.length(); i++) {
                                     JSONObject obj = data.getJSONObject(i);
-                                     order = new Order(
+                                    order = new Order(
                                             obj.getInt("order_id"),
                                             obj.getInt("user_id"),
                                             obj.getString("address"),
@@ -332,26 +340,8 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                                             (float)obj.getDouble("total"),
                                             obj.getInt("delivered_by")
                                      );
-                                     if (user.getId() == order.getDelivered_by()) {
-                                         btnMapCancel.setOnClickListener(view -> {
-                                             DeliveryMapsFragment.this.updateOrderStatus(view,  Properties.CANCELLED, order.getOrder_id());
-                                         });
-
-                                         btnMapDelivered.setOnClickListener(view -> {
-                                             DeliveryMapsFragment.this.updateOrderStatus(view,  Properties.RECEIVED, order.getOrder_id());
-                                         });
-                                     } else {
-                                         btnMapCancel.setOnClickListener(view -> {
-                                             DeliveryMapsFragment.this.updateOrderStatus(view,  Properties.CANNOT_UPDATE_BY_DRIVER, order.getOrder_id());
-                                         });
-
-                                         btnMapDelivered.setOnClickListener(view -> {
-                                             DeliveryMapsFragment.this.updateOrderStatus(view,  Properties.CANNOT_UPDATE_BY_DRIVER, order.getOrder_id());
-                                         });
-                                     }
-
                                 }
-
+                                setOnBtnClickListener();
                             } else {
                                 Toast.makeText(getContext(), "Failed to load Order", Toast.LENGTH_LONG).show();
                             }
@@ -387,10 +377,10 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                             JSONObject res = new JSONObject(response);
 
                             if (Validator.isResponseSuccess(res.getString("response"))) {
-                                String msg = String.format("Order status has been updated to %s", Properties.DELIVERING);
+                                String msg = String.format("Order status has been updated to %s", state);
                                 Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                                // move to maps
 
+                                getToDeliverOrder(getContext());
                             } else {
                                 Toast.makeText(getContext(), "Error accepting order", Toast.LENGTH_LONG).show();
                             }
@@ -422,5 +412,42 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
             }
         };
         q.add(jsonObjRequest);
+    }
+
+    public void setOnBtnClickListener() {
+        if (!hasNoRecord && order != null) {
+            txtMapNoRecord.setVisibility(View.VISIBLE);
+            btnMapCancel.setVisibility(View.VISIBLE);
+            btnMapDelivered.setVisibility(View.VISIBLE);
+
+            if (user.getId() == order.getDelivered_by()) {
+                btnMapCancel.setOnClickListener(view -> {
+                    updateOrderStatus(view,  Properties.CANCELLED, order.getOrder_id());
+                });
+
+                btnMapDelivered.setOnClickListener(view -> {
+                    updateOrderStatus(view,  Properties.RECEIVED, order.getOrder_id());
+                });
+            } else {
+                btnMapCancel.setOnClickListener(view -> {
+                    updateOrderStatus(view,  Properties.CANNOT_UPDATE_BY_DRIVER, order.getOrder_id());
+                });
+
+                btnMapDelivered.setOnClickListener(view -> {
+                    updateOrderStatus(view,  Properties.CANNOT_UPDATE_BY_DRIVER, order.getOrder_id());
+                });
+            }
+        } else {
+            txtMapNoRecord.setVisibility(View.VISIBLE);
+            btnMapCancel.setVisibility(View.INVISIBLE);
+            btnMapDelivered.setVisibility(View.INVISIBLE);
+            hasNoRecord = true;
+            if (DeliveryMapsFragment.this.map != null) {
+                DeliveryMapsFragment.this.map.clear();
+            }
+            if (mapFragment != null) {
+                mapFragment.getView().setVisibility(View.INVISIBLE);
+            }
+        }
     }
 }
