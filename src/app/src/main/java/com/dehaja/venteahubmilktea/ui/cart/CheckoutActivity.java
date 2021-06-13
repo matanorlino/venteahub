@@ -46,10 +46,13 @@ public class CheckoutActivity extends AppCompatActivity {
     private RadioGroup rgPaymentMethod;
     private RadioButton rbCOD;
     private TextView textTotal;
+    private TextView txtAddress;
 
     private VenteaUser user;
     private float total;
     private ArrayList<CartItem> cartItems;
+    private double selectedLat;
+    private double selectedLng;
 
     private String orderNumber;
     private final int LAUNCH_SELECT_ADDRESS_ACTIVITY = 1;
@@ -68,6 +71,7 @@ public class CheckoutActivity extends AppCompatActivity {
         textGCashNumber = findViewById(R.id.textGCashNumber);
         linearGCashInfo = findViewById(R.id.linearGCashInfo);
         textOrderNumber = findViewById(R.id.textOrderNumber);
+        txtAddress = findViewById(R.id.txtAddress);
         rgPaymentMethod = findViewById(R.id.rgPaymentMethod);
         rbCOD = findViewById(R.id.rbCOD);
         textTotal = findViewById(R.id.textTotal);
@@ -175,11 +179,11 @@ public class CheckoutActivity extends AppCompatActivity {
 
         if (requestCode == LAUNCH_SELECT_ADDRESS_ACTIVITY) {
             if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("address");
-                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                // Write your code if there's no result
+                String addressName=data.getStringExtra("addressName");
+                selectedLat = data.getDoubleExtra("lat", 14.28575403726168);
+                selectedLng = data.getDoubleExtra("lng", 121.1055055117034);
+
+                txtAddress.setText(addressName);
             }
         }
     }

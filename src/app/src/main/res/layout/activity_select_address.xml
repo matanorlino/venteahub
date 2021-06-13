@@ -31,4 +31,16 @@
 
     </androidx.cardview.widget.CardView>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_address"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="15dp"
+        android:textSize="18sp"
+        android:background="@color/teal_700"
+        android:textColor="@color/white"
+        android:onClick="closeOnClick"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
