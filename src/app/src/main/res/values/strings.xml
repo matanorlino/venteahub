@@ -55,6 +55,7 @@
     <string name="deliver_to">Deliver To</string>
     <string name="place_order">Place Order</string>
     <string name="select_address">Select Address</string>
+    <string name="search_address">Search Address...</string>
     <string name="payment_method">Payment Method</string>
     <string name="cod">Cash on Delivery</string>
     <string name="gcash">GCash</string>

@@ -1,14 +1,18 @@
 package com.dehaja.venteahubmilktea.ui.cart;
 
 
+import android.app.Activity;
 import android.content.Intent;
+import android.location.Address;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -48,6 +52,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private ArrayList<CartItem> cartItems;
 
     private String orderNumber;
+    private final int LAUNCH_SELECT_ADDRESS_ACTIVITY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +119,8 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     public void selectAddress(View view) {
-
+        Intent intent = new Intent(this, SelectAddressActivity.class);
+        startActivityForResult(intent, LAUNCH_SELECT_ADDRESS_ACTIVITY);
     }
 
     private void getGCashInfo() {
@@ -161,5 +167,20 @@ public class CheckoutActivity extends AppCompatActivity {
 
     public void closeOnClick(View view) {
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LAUNCH_SELECT_ADDRESS_ACTIVITY) {
+            if(resultCode == Activity.RESULT_OK){
+                String result=data.getStringExtra("address");
+                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                // Write your code if there's no result
+            }
+        }
     }
 }
