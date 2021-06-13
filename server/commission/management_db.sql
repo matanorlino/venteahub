@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2021 at 04:07 PM
--- Server version: 10.1.28-MariaDB
--- PHP Version: 7.1.11
+-- Generation Time: Jun 13, 2021 at 10:20 AM
+-- Server version: 10.4.17-MariaDB
+-- PHP Version: 8.0.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -58,7 +57,7 @@ CREATE TABLE `customer_order` (
   `phone` varchar(255) NOT NULL,
   `qty` int(11) NOT NULL,
   `date` datetime NOT NULL,
-  `delivered_by` int(11) NOT NULL DEFAULT '0',
+  `delivered_by` int(11) NOT NULL DEFAULT 0,
   `date_delivered` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -67,7 +66,31 @@ CREATE TABLE `customer_order` (
 --
 
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `date`, `delivered_by`, `date_delivered`) VALUES
-(1, 4, 'wait_deliver', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-05-13 13:50:24');
+(1, 4, 'delivering', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-06-13 07:51:34');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `delivering_orders`
+-- (See below for the actual view)
+--
+CREATE TABLE `delivering_orders` (
+`user_id` int(11)
+,`username` varchar(255)
+,`contact_no` varchar(15)
+,`date` datetime
+,`order_id` int(20)
+,`product_id` int(11)
+,`product_img` varchar(255)
+,`product_name` varchar(255)
+,`address` varchar(255)
+,`qty` int(11)
+,`sell_price` float
+,`sub_total` double
+,`state` varchar(255)
+,`request` text
+,`delivered_by` int(11)
+);
 
 -- --------------------------------------------------------
 
@@ -143,6 +166,13 @@ CREATE TABLE `order_products` (
   `qty` int(11) NOT NULL,
   `request` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `order_products`
+--
+
+INSERT INTO `order_products` (`order_id`, `product_id`, `qty`, `request`) VALUES
+(1, 15, 15, 'wala naman po');
 
 -- --------------------------------------------------------
 
@@ -241,11 +271,20 @@ CREATE TABLE `wait_driver_orders` (
 -- --------------------------------------------------------
 
 --
+-- Structure for view `delivering_orders`
+--
+DROP TABLE IF EXISTS `delivering_orders`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `delivering_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request`, `co`.`delivered_by` AS `delivered_by` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'delivering' ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view `wait_driver_orders`
 --
 DROP TABLE IF EXISTS `wait_driver_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS  select `user`.`id` AS `user_id`,`user`.`username` AS `username`,`user`.`contact_no` AS `contact_no`,`co`.`date` AS `date`,`co`.`order_id` AS `order_id`,`op`.`product_id` AS `product_id`,`prod`.`product_img` AS `product_img`,`prod`.`product_name` AS `product_name`,`co`.`address` AS `address`,`op`.`qty` AS `qty`,`prod`.`sell_price` AS `sell_price`,(`prod`.`sell_price` * `op`.`qty`) AS `sub_total`,`co`.`state` AS `state`,`op`.`request` AS `request` from (((`order_products` `op` left join `customer_order` `co` on((`op`.`order_id` = `co`.`order_id`))) left join `product` `prod` on((`op`.`product_id` = `prod`.`product_id`))) left join `user` on((`co`.`buyer_id` = `user`.`id`))) where (`co`.`state` = 'wait_deliver') ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
 
 --
 -- Indexes for dumped tables
