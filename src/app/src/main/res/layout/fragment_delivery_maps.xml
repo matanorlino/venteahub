@@ -45,6 +45,19 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:id="@+id/btnMapViewOrder"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/light_green"
+        android:onClick="onClickViewOrder"
+        android:text="@string/action_view_order"
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
         android:id="@+id/btnMapDelivered"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"

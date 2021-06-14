@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ public class OrderViewActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     TextView txtUsername;
     TextView txtGrandTotal;
+    Button btnOrderViewAccept;
     OrderItemsAdapter orderItemsAdapter;
 
     @Override
@@ -52,6 +54,7 @@ public class OrderViewActivity extends AppCompatActivity {
         order_id = getIntent().getIntExtra("order_id", 0);
         System.out.println("order_id: " + order_id);
         recyclerView = findViewById(R.id.recOrderView);
+        btnOrderViewAccept = findViewById(R.id.btnOrderViewAccept);
         txtUsername = findViewById(R.id.txtOrderViewUsername);
         txtGrandTotal = findViewById(R.id.txtOrderViewGrandTotal);
         initialize();
@@ -59,11 +62,22 @@ public class OrderViewActivity extends AppCompatActivity {
 
     public void initialize() {
         orderItems = new ArrayList<OrderItem>();
+        btnOrderViewAccept.setVisibility(View.VISIBLE);
+        if (user.getAccesslevel().equals(Properties.CUSTOMER)) {
+            btnOrderViewAccept.setVisibility(View.INVISIBLE);
+        }
         getOrderItems(this);
     }
 
     private void getOrderItems(Context context) {
-        String url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id="+order_id;
+        String url = "";
+        if (user.getAccesslevel().equals(Properties.DRIVER)) {
+            url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id="+order_id;
+        } else {
+            url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id=" + order_id
+                    + "&state=" + Properties.DELIVERING;
+        }
+        
         RequestQueue q = Volley.newRequestQueue(context);
         StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
                 url,
@@ -79,7 +93,6 @@ public class OrderViewActivity extends AppCompatActivity {
                                 for (int i = 0; i < data.length(); i++) {
                                     sb.delete(0, sb.length());
                                     JSONObject obj = data.getJSONObject(i);
-                                    System.out.println(obj);
                                     orderItems.add(new OrderItem(
                                             obj.getInt("user_id"),
                                             obj.getInt("order_id"),

@@ -30,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehaja.venteahubmilktea.R;
+import com.dehaja.venteahubmilktea.models.DeliveringItem;
 import com.dehaja.venteahubmilktea.models.Order;
 import com.dehaja.venteahubmilktea.models.OrderItem;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
@@ -84,12 +85,16 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
 
     private VenteaUser user;
     private Order order;
+    private DeliveringItem deliveringItem;
     private Button btnMapCancel;
     private Button btnMapDelivered;
+    private Button btnViewOrder;
     private TextView txtMapNoRecord;
     private SupportMapFragment mapFragment;
 
     private boolean hasNoRecord = false;
+    private boolean hasOrder = false;
+
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -104,21 +109,22 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
          */
         @Override
         public void onMapReady(GoogleMap map) {
-            LatLng venteaLoc = new LatLng(14.28715398053406, 121.10748793798585);
+            LatLng venteaLoc = Properties.getVenteaLocation();
             map.addMarker(new MarkerOptions().position(venteaLoc).title(Properties.TITLE)).showInfoWindow();
-//            map.setTrafficEnabled(true);
+
             // change to customer's address
-            LatLngBounds venteeaBounds = new LatLngBounds(
-                    new LatLng(14.28575403726168, 121.1055055117034),
-                    new LatLng(14.288913085757631, 121.11029644386753)
-            );
-//            map.moveCamera(CameraUpdateFactory.newLatLng(venteaLoc));
+            LatLngBounds venteeaBounds = Properties.getVenteaBounds();
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(venteeaBounds.getCenter(), 15));
+
             DeliveryMapsFragment.this.map = map;
-            if (hasNoRecord) {
-                DeliveryMapsFragment.this.map.clear();
+            if (user.getAccesslevel().equals(Properties.DRIVER)) {
+                if (hasNoRecord) {
+                    DeliveryMapsFragment.this.map.clear();
+                } else {
+                    getMyLocation();
+                }
             } else {
-                getMyLocation();
+                getDriverLocation(getContext());
             }
         }
     };
@@ -133,9 +139,8 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         user = (VenteaUser)(getActivity().getIntent().getSerializableExtra("VenteaUser"));
         btnMapCancel = root.findViewById(R.id.btnMapCancel);
         btnMapDelivered = root.findViewById(R.id.btnMapDelivered);
+        btnViewOrder = root.findViewById(R.id.btnMapViewOrder);
         txtMapNoRecord = root.findViewById(R.id.txtMapNoRecord);
-
-        getToDeliverOrder(getContext());
 
         return root;
     }
@@ -145,16 +150,39 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         super.onViewCreated(view, savedInstanceState);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
-            if (hasNoRecord) {
-                mapFragment.getView().setVisibility(View.INVISIBLE);
+            mapFragment.getMapAsync(callback);
+            if (user.getAccesslevel().equals(Properties.DRIVER)) {
+                setDriversView();
             } else {
-                mapFragment.getView().setVisibility(View.VISIBLE);
-                txtMapNoRecord.setVisibility(View.INVISIBLE);
-                btnMapCancel.setVisibility(View.VISIBLE);
-                btnMapDelivered.setVisibility(View.VISIBLE);
-                mapFragment.getMapAsync(callback);
+                setCustomerView();
             }
         }
+    }
+
+    private void setDriversView() {
+        btnViewOrder.setVisibility(View.INVISIBLE);
+        if (hasNoRecord) {
+            mapFragment.getView().setVisibility(View.INVISIBLE);
+        } else {
+            mapFragment.getView().setVisibility(View.VISIBLE);
+            txtMapNoRecord.setVisibility(View.INVISIBLE);
+            btnMapCancel.setVisibility(View.VISIBLE);
+            btnMapDelivered.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setCustomerView() {
+        if (hasOrder) {
+            mapFragment.getView().setVisibility(View.VISIBLE);
+            btnViewOrder.setVisibility(View.VISIBLE);
+            txtMapNoRecord.setVisibility(View.INVISIBLE);
+        } else {
+            mapFragment.getView().setVisibility(View.INVISIBLE);
+            btnViewOrder.setVisibility(View.INVISIBLE);
+            txtMapNoRecord.setVisibility(View.VISIBLE);
+        }
+        btnMapCancel.setVisibility(View.INVISIBLE);
+        btnMapDelivered.setVisibility(View.INVISIBLE);
     }
 
     private void requestPermission() {
@@ -201,6 +229,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
             public void onMyLocationChange(Location location) {
                 myLocation = location;
                 LatLng ltlng = new LatLng(location.getLatitude(), location.getLongitude());
+                System.out.println("[LOCATION]: " + ltlng);
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
                         ltlng, 16f);
                 map.moveCamera(cameraUpdate);
@@ -235,7 +264,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                     .withListener(this)
                     .alternativeRoutes(true)
                     .waypoints(start, end)
-                    .key(Properties.MAP_API_KEY)  //also define your api key here.
+                    .key(Properties.MAP_API_KEY)
                     .build();
             routing.execute();
         }
@@ -263,7 +292,6 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         PolylineOptions polyOptions = new PolylineOptions();
         LatLng polylineStartLatLng = null;
         LatLng polylineEndLatLng = null;
-
 
         polylines = new ArrayList<>();
         //add route(s) to the map using polyline
@@ -293,6 +321,10 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         endMarker.position(polylineEndLatLng);
         endMarker.title("Destination");
         map.addMarker(endMarker);
+
+        if (user.getAccesslevel().equals(Properties.CUSTOMER)) {
+
+        }
     }
 
     @Override
@@ -438,16 +470,68 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                 });
             }
         } else {
-            txtMapNoRecord.setVisibility(View.VISIBLE);
-            btnMapCancel.setVisibility(View.INVISIBLE);
-            btnMapDelivered.setVisibility(View.INVISIBLE);
-            hasNoRecord = true;
-            if (DeliveryMapsFragment.this.map != null) {
-                DeliveryMapsFragment.this.map.clear();
-            }
-            if (mapFragment != null) {
-                mapFragment.getView().setVisibility(View.INVISIBLE);
+            if (user.getAccesslevel().equals(Properties.DRIVER)) {
+                txtMapNoRecord.setVisibility(View.VISIBLE);
+                btnMapCancel.setVisibility(View.INVISIBLE);
+                btnMapDelivered.setVisibility(View.INVISIBLE);
+                hasNoRecord = true;
+                if (DeliveryMapsFragment.this.map != null) {
+                    DeliveryMapsFragment.this.map.clear();
+                }
+                if (mapFragment != null) {
+                    mapFragment.getView().setVisibility(View.INVISIBLE);
+                }
             }
         }
+    }
+
+    private void getDriverLocation(Context context) {
+        String url = Properties.SERVER_URL + "api/App_Get_Order_Location.php?buyer_id=" + user.getId();
+        RequestQueue q = Volley.newRequestQueue(context);
+        StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject res = new JSONObject(response);
+                            if (Validator.isResponseSuccess(res.getString("response"))) {
+                                JSONArray data = res.getJSONArray("data");
+                                for (int i = 0; i < data.length(); i++) {
+                                    hasOrder = true;
+                                    JSONObject obj = data.getJSONObject(i);
+                                    deliveringItem = new DeliveringItem(
+                                            obj.getInt("delivered_by"),
+                                            obj.getInt("order_id"),
+                                            obj.getString("address"),
+                                            obj.getDouble("latitude"),
+                                            obj.getDouble("longitude"),
+                                            obj.getString("state")
+                                    );
+                                    btnViewOrder.setContentDescription(String.valueOf(deliveringItem.getOrder_id()));
+                                }
+                                LatLng driverLoc = new LatLng(deliveringItem.getLatitude(), deliveringItem.getLongitude());
+                                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+                                        driverLoc, 16f);
+                                map.moveCamera(cameraUpdate);
+                                findRoutes(driverLoc, venteaLoc);
+                                setCustomerView();
+//                                setOnBtnClickListener();
+                            } else {
+                                Toast.makeText(getContext(), "Failed to load Map", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            Toast.makeText(getContext(), "Failed to load Map", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "Failed to load Map", Toast.LENGTH_LONG).show();
+                error.printStackTrace();
+            }
+        });
+        q.add(jsonObjRequest);
     }
 }

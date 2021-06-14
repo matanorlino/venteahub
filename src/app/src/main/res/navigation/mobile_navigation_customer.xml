@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/nav_order_history"
-        android:name="com.dehaja.venteahubmilktea.ui.customer.OrderHistoryFragment"
+        android:name="com.dehaja.venteahubmilktea.ui.common.DeliveryMapsFragment"
         android:label="@string/menu_order_history"
-        tools:layout="@layout/fragment_order_history" />
+        tools:layout="@layout/fragment_for_delivery" />
 
     <fragment
         android:id="@+id/nav_account"
