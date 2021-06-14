@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 13, 2021 at 10:20 AM
+-- Generation Time: Jun 14, 2021 at 03:47 AM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -66,7 +66,7 @@ CREATE TABLE `customer_order` (
 --
 
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `date`, `delivered_by`, `date_delivered`) VALUES
-(1, 4, 'delivering', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-06-13 07:51:34');
+(1, 4, 'delivering', 'Address Name, LatLong', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-06-13 15:07:20');
 
 -- --------------------------------------------------------
 
@@ -114,6 +114,19 @@ INSERT INTO `driver` (`driver_id`, `driver_name`, `driver_email`, `driver_phone`
 (6, 'benben', 'ben@gmail.com', '0912312'),
 (7, 'lara', 'lara@gmail.com', '091231231'),
 (9, 'mimi', 'mimi@gmail.com', '092131881');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `driver_location`
+--
+
+CREATE TABLE `driver_location` (
+  `delivered_by` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `latitude` float NOT NULL,
+  `longitude` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
