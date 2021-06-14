@@ -25,7 +25,7 @@ class order {
 
     function getOrders() {
         require_once('../connector.php');
-        $sql = 'SELECT co.order_id, user.username, user.contact_no, co.address, user.email, SUM(op.qty) AS total_qty, SUM(op.qty * prod.sell_price) AS grand_total, co.date, co.request AS instruction, co.state FROM customer_order co LEFT JOIN order_products op ON co.order_id = op.order_id LEFT JOIN user ON co.buyer_id = user.id LEFT JOIN product prod ON op.product_id = prod.product_id GROUP BY op.order_id ORDER BY state, co.date, username DESC;';
+        $sql = 'SELECT co.order_id, user.username, user.contact_no, co.address, user.email, SUM(op.qty) AS total_qty, SUM(op.qty * prod.sell_price) AS grand_total, co.order_date, co.request AS instruction, co.state FROM customer_order co LEFT JOIN order_products op ON co.order_id = op.order_id LEFT JOIN user ON co.buyer_id = user.id LEFT JOIN product prod ON op.product_id = prod.product_id GROUP BY op.order_id ORDER BY state, co.order_date, username DESC;';
 
         $stmt = $conn->prepare($sql);
     
