@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2021 at 11:00 AM
+-- Generation Time: Jun 14, 2021 at 12:47 PM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 8.0.7
 
@@ -67,8 +67,7 @@ CREATE TABLE `customer_order` (
 --
 
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `order_date`, `delivered_by`, `date_delivered`, `order_no`) VALUES
-(1, 4, 'wait_deliver', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-05-13 13:50:24', ''),
-(15, 4, 'unexamined', '14.288569,121.110281', '', '0912 3456 789', 0, '2021-06-14 16:53:38', 0, NULL, '4210614165326');
+(1, 4, 'wait_deliver', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-05-13 13:50:24', '');
 
 -- --------------------------------------------------------
 
@@ -272,6 +271,12 @@ ALTER TABLE `gcash_information`
   ADD PRIMARY KEY (`number`);
 
 --
+-- Indexes for table `order_products`
+--
+ALTER TABLE `order_products`
+  ADD PRIMARY KEY (`order_id`,`product_id`);
+
+--
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
@@ -299,7 +304,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `order_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `order_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `driver`
