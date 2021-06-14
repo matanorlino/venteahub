@@ -77,7 +77,7 @@ public class OrderViewActivity extends AppCompatActivity {
             url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id=" + order_id
                     + "&state=" + Properties.DELIVERING;
         }
-        
+
         RequestQueue q = Volley.newRequestQueue(context);
         StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
                 url,
