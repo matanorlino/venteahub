@@ -6,6 +6,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -53,6 +54,10 @@ public class ProductViewActivity extends AppCompatActivity {
     private String productCode;
     private int productId;
     private ArrayList<Product> models;
+    private EditText editProductInstruction;
+
+    private int qty;
+    private String instruction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,7 @@ public class ProductViewActivity extends AppCompatActivity {
         this.user = (VenteaUser) intent.getSerializableExtra("VenteaUser");
         this.productCode = intent.getStringExtra("product_code");
         this.productId = intent.getIntExtra("product_id", 0);
+        this.editProductInstruction = findViewById(R.id.editProductInstruction);
 
         getProduct();
     }
@@ -195,12 +201,13 @@ public class ProductViewActivity extends AppCompatActivity {
 
     private void loadCartDetails() {
         CartUtil cart = CartUtil.getInstance(this);
-        // Check if product is existing in cart
 
+        // Check if product is existing in cart
         if (isExistingInCart) {
             Cursor resultSet = cart.getProduct(user.getId(), selectedModel.getProduct_id());
             // get product qty from cart then multiply to sell price
-            int qty = getProductQtyFromCart(resultSet);
+            this.editProductInstruction.setText(instruction == null ? "" : instruction);
+            getProductInfoFromCart(resultSet);
             this.subtotal = qty * selectedModel.getSell_price();
             this.buttonAddToCart.setText(Properties.UPDATE_CART.concat(
                     String.format(Locale.US, "%s %.2f", Properties.PESO_SIGN, subtotal)));
@@ -273,14 +280,13 @@ public class ProductViewActivity extends AppCompatActivity {
         }
     }
 
-    private int getProductQtyFromCart(Cursor resultSet) {
-        int qty = 0;
+    private void getProductInfoFromCart(Cursor resultSet) {
         if (resultSet.moveToFirst()) {
             do {
                 qty = resultSet.getInt(2) ;//quantity
+                instruction = resultSet.getString(7); // instruction
             } while (resultSet.moveToNext());
         }
-        return qty;
     }
 
     public void addToCartOnClick(View view) {
@@ -293,10 +299,11 @@ public class ProductViewActivity extends AppCompatActivity {
             float product_price = selectedModel.getSell_price();
             float sell_price = selectedModel.getSell_price();
             String model = selectedModel.getModel();
+            String instruction = editProductInstruction.getText().toString();
             if (cart.isProductExist(user.getId(), selectedModel.getProduct_id())) {
-                // Update product qty
-                cart.updateProduct(user_id, product_id, qty);
-                Toast.makeText(this, "Successfully updated item quantity", Toast.LENGTH_LONG).show();
+                // Update product
+                cart.updateProduct(user_id, product_id, qty, instruction);
+                Toast.makeText(this, "Successfully updated", Toast.LENGTH_LONG).show();
 
                 // Back to cart
                 if (productId != 0) {
@@ -309,7 +316,7 @@ public class ProductViewActivity extends AppCompatActivity {
                 }
             } else {
                 // Add to cart
-                if (cart.addToCart(user_id, product_id, qty, product_name, product_price, sell_price, model)) {
+                if (cart.addToCart(user_id, product_id, qty, product_name, product_price, sell_price, model, instruction)) {
                     Toast.makeText(this, "Successfully added to cart", Toast.LENGTH_LONG).show();
                     isExistingInCart = true;
                     setQuantity(qty);

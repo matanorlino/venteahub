@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,6 +27,8 @@ public class CartActivity extends AppCompatActivity {
     private VenteaUser user;
     private ListView listProducts;
     private float total = 0f;
+    private Button buttonAddToCart;
+    TextView textEmptyCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +37,38 @@ public class CartActivity extends AppCompatActivity {
         Intent cartIntent = getIntent();
         user = (VenteaUser) cartIntent.getSerializableExtra("VenteaUser");
 
-        TextView textEmptyCart = (TextView) findViewById(R.id.textEmptyCart);
+        buttonAddToCart = findViewById(R.id.buttonAddToCart);
+
+        textEmptyCart = (TextView) findViewById(R.id.textEmptyCart);
         listProducts = (ListView) findViewById(R.id.listCartItems);
 
         loadCart();
+    }
+
+    private void loadCart() {
+        this.cartItems = new ArrayList<>();
+        CartUtil cartUtil = CartUtil.getInstance(this);
+        Cursor resultSet = cartUtil.getCart(user.getId());
+
+        if (resultSet.moveToFirst()) {
+            do {
+                CartItem item = new CartItem(0,0,"",0,0,0,"","");
+                item.setUserId(resultSet.getInt(resultSet.getColumnIndex("user_id")));
+                item.setProductId(resultSet.getInt(resultSet.getColumnIndex("product_id")));
+                item.setProductName(resultSet.getString(resultSet.getColumnIndex("product_name")));
+                item.setProductPrice(resultSet.getFloat(resultSet.getColumnIndex("product_price")));
+                item.setSellPrice(resultSet.getFloat(resultSet.getColumnIndex("sell_price")));
+                item.setQuantity(resultSet.getInt(resultSet.getColumnIndex("quantity")));
+                item.setModel(resultSet.getString(resultSet.getColumnIndex("model")));
+                item.setInstruction(resultSet.getString(resultSet.getColumnIndex("instruction")));
+                cartItems.add(item);
+            } while (resultSet.moveToNext());
+        }
+
+        if (cartItems.size() < 1) {
+            buttonAddToCart.setEnabled(false);
+        }
+
         if (cartItems.size() > 0) {
             textEmptyCart.setVisibility(View.GONE);
             listProducts.setVisibility(View.VISIBLE);
@@ -46,27 +77,6 @@ public class CartActivity extends AppCompatActivity {
         } else {
             listProducts.setVisibility(View.GONE);
             textEmptyCart.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void loadCart() {
-        this.cartItems = new ArrayList<>();
-        CartUtil cartUtil = CartUtil.getInstance(this);
-        Cursor resultSet = cartUtil.getCart(user.getId());
-
-        System.out.println("ResultSet: " + resultSet);
-        if (resultSet.moveToFirst()) {
-            do {
-                cartItems.add(new CartItem(
-                        resultSet.getInt(0), //user_id
-                        resultSet.getInt(1), //product_id
-                        resultSet.getString(3), // product_name
-                        resultSet.getFloat(4), // product_price
-                        resultSet.getFloat(5), // sell_price
-                        resultSet.getInt(2), //quantity
-                        resultSet.getString(6) //model
-                ));
-            } while (resultSet.moveToNext());
         }
     }
 
@@ -107,6 +117,7 @@ public class CartActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == 1) {
+            loadCart();
             finish();
         }
         super.onActivityResult(requestCode, resultCode, data);

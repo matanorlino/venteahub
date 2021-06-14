@@ -31,7 +31,7 @@ public class CartUtil {
 
     public void createCartTable() {
         db.execSQL("CREATE TABLE IF NOT EXISTS " +
-                "Cart(user_id INT, product_id INT, quantity INT, product_name TEXT, product_price FLOAT, sell_price FLOAT, model TEXT)");
+                "Cart(user_id INT, product_id INT, quantity INT, product_name TEXT, product_price FLOAT, sell_price FLOAT, model TEXT, instruction TEXT)");
     }
 
     public Cursor getCart() {
@@ -66,30 +66,33 @@ public class CartUtil {
         return isExist;
     }
 
-    public boolean addToCart(int user_id, int product_id, int qty, String product_name, float product_price, float sell_price, String model) {
+    public boolean addToCart(int user_id, int product_id, int qty, String product_name, float product_price, float sell_price, String model, String instruction) {
         try {
             db.execSQL(String.format(Locale.US,
-                "INSERT INTO Cart VALUES(%d, %d, %d, %s, %f, %f, %s)",
+                "INSERT INTO Cart VALUES(%d, %d, %d, %s, %f, %f, %s, %s)",
                 user_id,
                 product_id,
                 qty,
-                "\'" + product_name + "\'",
+                "'" + product_name + "'",
                 product_price,
                 sell_price,
-                 "\'" + model + "\'"));
+                "'" + model + "'",
+                "'" + instruction + "'"));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return isProductExist(user_id, product_id);
     }
 
-    public void updateProduct(int user_id, int product_id, int qty) {
+    public void updateProduct(int user_id, int product_id, int qty, String instruction) {
         try {
             Cursor result = getProduct(user_id, product_id);
             if (result.moveToFirst()) {
                 do {
                     db.execSQL(String.format(Locale.US, "UPDATE Cart SET quantity = %s WHERE user_id = %s AND product_id = %s",
                             qty, user_id, product_id));
+                    db.execSQL(String.format(Locale.US, "UPDATE Cart SET instruction = %s WHERE user_id = %s AND product_id = %s",
+                            "'" + instruction + "'", user_id, product_id));
                 } while (result.moveToNext());
             }
 

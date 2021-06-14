@@ -11,8 +11,9 @@ public class CartItem implements Parcelable {
     private float sellPrice;
     private int quantity;
     private String model;
+    private String instruction;
 
-    public CartItem(int userId, int productId, String productName, float productPrice, float sellPrice, int quantity, String model) {
+    public CartItem(int userId, int productId, String productName, float productPrice, float sellPrice, int quantity, String model, String instruction) {
         this.userId = userId;
         this.productId = productId;
         this.productName = productName;
@@ -20,6 +21,7 @@ public class CartItem implements Parcelable {
         this.sellPrice = sellPrice;
         this.quantity = quantity;
         this.model = model;
+        this.instruction = instruction;
     }
 
     protected CartItem(Parcel in) {
@@ -30,6 +32,7 @@ public class CartItem implements Parcelable {
         sellPrice = in.readFloat();
         quantity = in.readInt();
         model = in.readString();
+        instruction = in.readString();
     }
 
     public static final Creator<CartItem> CREATOR = new Creator<CartItem>() {
@@ -92,6 +95,10 @@ public class CartItem implements Parcelable {
 
     public void setModel(String model) { this.model = model; }
 
+    public String getInstruction() { return instruction; }
+
+    public void setInstruction(String instruction) { this.instruction = instruction; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -105,5 +112,7 @@ public class CartItem implements Parcelable {
         parcel.writeFloat(productPrice);
         parcel.writeFloat(sellPrice);
         parcel.writeInt(quantity);
+        parcel.writeString(model);
+        parcel.writeString(instruction);
     }
 }
