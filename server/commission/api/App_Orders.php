@@ -17,7 +17,7 @@
     if (isset($_POST['order_no'])) {
         $order_no = $_POST['order_no'];
     }
-    $state = "unexamined";
+    $state = "wait_deliver";
 
     $stmt = $conn->prepare("INSERT INTO customer_order(buyer_id, state, address, phone, order_date, order_no)VALUES(?,?,?,?,?,?);");
     $stmt->bind_param('isssss', $buyer_id, $state, $address, $phone, $order_date, $order_no);
