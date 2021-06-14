@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -12,12 +13,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.dehaja.venteahubmilktea.R;
-import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -41,6 +43,9 @@ public class SelectAddressActivity extends AppCompatActivity implements OnMapRea
     private GoogleMap map;
     private SupportMapFragment mapFragment;
     private AutocompleteSupportFragment autocompleteFragment;
+    private final LatLngBounds selectableArea = new LatLngBounds(
+            new LatLng(14.235052234920598, 121.04939937761759),
+            new LatLng(14.334508423369526, 121.16843657626411));
     private LatLng selectedPlace;
     private String selectedPlaceName;
 
@@ -54,15 +59,24 @@ public class SelectAddressActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void initializeMap() {
-        LatLngBounds venteaBounds = Properties.getVenteaBounds();
+        setVenteaMarker();
+        // move camera to ventea area
+        LatLngBounds venteaBounds = new LatLngBounds(
+                new LatLng(14.28575403726168, 121.1055055117034),
+                new LatLng(14.288913085757631, 121.11029644386753)
+        );
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(venteaBounds.getCenter(), 15));
+        map.setLatLngBoundsForCameraTarget(selectableArea);
+        map.setMinZoomPreference(6.0f);
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 selectedPlace = latLng;
                 Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                try {
-                    selectedPlaceName = Properties.getAddressNameByLatLng(getApplicationContext(), selectedPlace);
+                try{
+                    List<Address> addressList = geocoder.getFromLocation(
+                            latLng.latitude, latLng.longitude, 1);
+                    selectedPlaceName = addressList.get(0).getAddressLine(0);
                     updateMapLocation();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -72,7 +86,6 @@ public class SelectAddressActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void initializeAutocomplete() {
-        // LEAVE THE API_KEY AS STRING LITERAL
         Places.initialize(getBaseContext(), "AIzaSyDNYt-tL60_OdNJwDPTl_7KSM-Kmyxslos");
         PlacesClient placesClient = Places.createClient(this);
 
@@ -83,9 +96,7 @@ public class SelectAddressActivity extends AppCompatActivity implements OnMapRea
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
 
         // Set location restriction
-        autocompleteFragment.setLocationRestriction(RectangularBounds.newInstance(
-                new LatLng(14.235052234920598, 121.04939937761759),
-                new LatLng(14.334508423369526, 121.16843657626411)));
+        autocompleteFragment.setLocationRestriction(RectangularBounds.newInstance(selectableArea));
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -104,8 +115,17 @@ public class SelectAddressActivity extends AppCompatActivity implements OnMapRea
         });
     }
 
+    private void setVenteaMarker() {
+        // add marker to ventea
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(14.28715398053406, 121.10748793798585))
+                .title("Ventea Hub Milktea")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                .draggable(false));
+    }
     private void updateMapLocation() {
         map.clear();
+        setVenteaMarker();
         map.addMarker(new MarkerOptions().position(selectedPlace).title(selectedPlaceName));
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedPlace, 17));
     }

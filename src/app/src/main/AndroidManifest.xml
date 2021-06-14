@@ -24,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VenteaHubMilkTea"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.cart.SelectAddressActivity"></activity>
+        <activity android:name=".ui.cart.SelectAddressActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -105,6 +105,15 @@
             android:theme="@style/Theme.VenteaHubMilkTea.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.CHECKOUT_VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.cart.DriverSearchActivity"
+            android:theme="@style/Theme.VenteaHubMilkTea.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.DRIVER_SEARCH_VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

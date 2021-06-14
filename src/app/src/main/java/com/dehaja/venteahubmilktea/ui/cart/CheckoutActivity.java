@@ -225,6 +225,12 @@ public class CheckoutActivity extends AppCompatActivity {
                 }
             };
             q.add(jsonObjRequest);
+        } else {
+            Intent intent = new Intent("android.intent.action.DRIVER_SEARCH_VIEW");
+            intent.putExtra("VenteaUser", user);
+            intent.putExtra("orderId", orderId);
+            startActivity(intent);
+            endActivity();
         }
     }
 
