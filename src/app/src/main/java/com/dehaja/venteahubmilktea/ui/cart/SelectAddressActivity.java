@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.dehaja.venteahubmilktea.R;
+import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -53,20 +54,15 @@ public class SelectAddressActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void initializeMap() {
-        LatLngBounds venteaBounds = new LatLngBounds(
-                new LatLng(14.28575403726168, 121.1055055117034),
-                new LatLng(14.288913085757631, 121.11029644386753)
-        );
+        LatLngBounds venteaBounds = Properties.getVenteaBounds();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(venteaBounds.getCenter(), 15));
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 selectedPlace = latLng;
                 Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                try{
-                    List<Address> addressList = geocoder.getFromLocation(
-                            latLng.latitude, latLng.longitude, 1);
-                    selectedPlaceName = addressList.get(0).getAddressLine(0);
+                try {
+                    selectedPlaceName = Properties.getAddressNameByLatLng(getApplicationContext(), selectedPlace);
                     updateMapLocation();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -76,6 +72,7 @@ public class SelectAddressActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void initializeAutocomplete() {
+        // LEAVE THE API_KEY AS STRING LITERAL
         Places.initialize(getBaseContext(), "AIzaSyDNYt-tL60_OdNJwDPTl_7KSM-Kmyxslos");
         PlacesClient placesClient = Places.createClient(this);
 

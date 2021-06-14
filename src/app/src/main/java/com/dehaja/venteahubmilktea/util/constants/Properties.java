@@ -1,5 +1,17 @@
 package com.dehaja.venteahubmilktea.util.constants;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 public class Properties {
     public static String TITLE = "Ventea Hub Milktea";
     /*
@@ -49,9 +61,37 @@ public class Properties {
      * Map Key
      */
     public static String MAP_API_KEY = "AIzaSyDNYt-tL60_OdNJwDPTl_7KSM-Kmyxslos";
+    private static final LatLng VENTEA_LOC = new LatLng(14.28715398053406, 121.10748793798585);
+    private static final LatLngBounds VENTEA_BOUNDS = new LatLngBounds(
+            new LatLng(14.28575403726168, 121.1055055117034),
+            new LatLng(14.288913085757631, 121.11029644386753)
+    );
 
     public void setServerUrl(String url) {
         Properties.SERVER_URL = url;
+    }
+
+    public static LatLng getVenteaLocation() {
+        return Properties.VENTEA_LOC;
+    }
+
+    public static LatLngBounds getVenteaBounds() {
+        return Properties.VENTEA_BOUNDS;
+    }
+
+    public static String getAddressNameByLatLng(Context context, LatLng latLng) throws IOException{
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Address> addressList = geocoder.getFromLocation(
+                latLng.latitude, latLng.longitude, 1);
+        return addressList.get(0).getAddressLine(0);
+    }
+
+    public static String getAddressName(String [] address) {
+        if (address != null && address.length > 0) {
+            String add = Arrays.toString(Arrays.copyOfRange(address, 0, address.length - 2));
+            return "";
+        }
+        return null;
     }
 
 }
