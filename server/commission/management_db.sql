@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2021 at 05:32 AM
+-- Generation Time: Jun 14, 2021 at 11:00 AM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 8.0.7
 
@@ -58,15 +58,17 @@ CREATE TABLE `customer_order` (
   `qty` int(11) NOT NULL,
   `order_date` datetime NOT NULL,
   `delivered_by` int(11) NOT NULL DEFAULT 0,
-  `date_delivered` timestamp NULL DEFAULT NULL
+  `date_delivered` timestamp NULL DEFAULT NULL,
+  `order_no` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `customer_order`
 --
 
-INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `order_date`, `delivered_by`, `date_delivered`) VALUES
-(1, 4, 'wait_deliver', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-05-13 13:50:24');
+INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `order_date`, `delivered_by`, `date_delivered`, `order_no`) VALUES
+(1, 4, 'wait_deliver', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-05-13 13:50:24', ''),
+(15, 4, 'unexamined', '14.288569,121.110281', '', '0912 3456 789', 0, '2021-06-14 16:53:38', 0, NULL, '4210614165326');
 
 -- --------------------------------------------------------
 
@@ -270,13 +272,6 @@ ALTER TABLE `gcash_information`
   ADD PRIMARY KEY (`number`);
 
 --
--- Indexes for table `order_products`
---
-ALTER TABLE `order_products`
-  ADD KEY `fk_order_products_customer_order` (`order_id`),
-  ADD KEY `fk_order_products_product` (`product_id`);
-
---
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
@@ -299,6 +294,12 @@ ALTER TABLE `user`
 --
 ALTER TABLE `category`
   MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `customer_order`
+--
+ALTER TABLE `customer_order`
+  MODIFY `order_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `driver`
@@ -334,13 +335,6 @@ ALTER TABLE `user`
 ALTER TABLE `customer_order`
   ADD CONSTRAINT `customer_order_ibfk_1` FOREIGN KEY (`buyer_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `customer_order_ibfk_2` FOREIGN KEY (`delivered_by`) REFERENCES `user` (`id`);
-
---
--- Constraints for table `order_products`
---
-ALTER TABLE `order_products`
-  ADD CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `order_products_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `customer_order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `product`

@@ -15,8 +15,8 @@
         $request = $_POST['request'];
     }
 
-    $stmt = $conn->prepare("INSERT INTO customer_order(order_id, product_id, qty, request)VALUES(?,?,?,?);");
-    $stmt->bind_param('ssss', $order_id, $product_id, $qty, $request);
+    $stmt = $conn->prepare("INSERT INTO order_products(order_id, product_id, qty, request)VALUES(?,?,?,?);");
+    $stmt->bind_param('iiis', $order_id, $product_id, $qty, $request);
     
     $response = null;
     if ($stmt->execute()) {
