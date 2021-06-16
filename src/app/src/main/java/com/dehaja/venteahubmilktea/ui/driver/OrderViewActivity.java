@@ -1,10 +1,16 @@
 package com.dehaja.venteahubmilktea.ui.driver;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +30,9 @@ import com.dehaja.venteahubmilktea.models.OrderItem;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +53,8 @@ public class OrderViewActivity extends AppCompatActivity {
     TextView txtGrandTotal;
     Button btnOrderViewAccept;
     OrderItemsAdapter orderItemsAdapter;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Location loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +76,8 @@ public class OrderViewActivity extends AppCompatActivity {
         btnOrderViewAccept.setVisibility(View.VISIBLE);
         if (user.getAccesslevel().equals(Properties.CUSTOMER)) {
             btnOrderViewAccept.setVisibility(View.INVISIBLE);
+        } else {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         }
         getOrderItems(this);
     }
@@ -157,8 +170,15 @@ public class OrderViewActivity extends AppCompatActivity {
                             if (Validator.isResponseSuccess(res.getString("response"))) {
                                 String msg = String.format("Order status has been updated to %s", Properties.DELIVERING);
                                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                loc = getLastKnowLocation();
                                 // move to maps
-                                closeOnClick(view);
+                                if (loc == null) {
+                                    // Update driver's loc
+                                    updateDriverLoc(view, user.getId(), order_id, -1, -1);
+                                } else {
+                                    // Update driver's loc
+                                    updateDriverLoc(view, user.getId(), order_id, loc.getLatitude(), loc.getLongitude());
+                                }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error accepting order", Toast.LENGTH_LONG).show();
                             }
@@ -190,6 +210,90 @@ public class OrderViewActivity extends AppCompatActivity {
             }
         };
         q.add(jsonObjRequest);
+    }
+
+    private void updateDriverLoc(View view, int user_id, int order_id, double latitude, double longitude) {
+        String url = Properties.SERVER_URL + "api/App_Update_Driver_Loc.php";
+        RequestQueue q = Volley.newRequestQueue(this);
+        StringRequest jsonObjRequest = new StringRequest(Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject res = new JSONObject(response);
+                            if (Validator.isResponseSuccess(res.getString("response"))) {
+                                // move to maps
+                                closeOnClick(view);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Failed updating driver location", Toast.LENGTH_LONG).show();
+                error.printStackTrace();
+            }
+        }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("flag", "i");
+                params.put("delivered_by", String.valueOf(user_id));
+                params.put("order_id", String.valueOf(order_id));
+                if (latitude != -1 && longitude != -1) {
+                    params.put("latitude", String.valueOf(latitude));
+                    params.put("longitude", String.valueOf(longitude));
+                }
+                return params;
+            }
+        };
+        q.add(jsonObjRequest);
+    }
+
+    private Location getLastKnowLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return loc;
+        }
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                loc = location;
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
+
+//        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//            @Override
+//            public void onSuccess(Location location) {
+//                loc = location;
+//                return;
+//            }
+//        });
+        return loc;
     }
 
 }

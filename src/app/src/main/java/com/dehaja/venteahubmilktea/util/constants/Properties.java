@@ -87,7 +87,7 @@ public class Properties {
     }
 
     public static String getAddressName(String [] address) {
-        if (address != null && address.length > 0) {
+        if (address != null && address.length > 1) {
             String add = Arrays.toString(Arrays.copyOfRange(address, 0, address.length - 2));
             return "";
         }

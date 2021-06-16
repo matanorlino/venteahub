@@ -29,6 +29,7 @@ import com.dehaja.venteahubmilktea.models.Order;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,10 +82,20 @@ public class OrderFragment extends Fragment {
                                 orders.clear();
                                 for (int i = 0; i < data.length(); i++) {
                                     JSONObject obj = data.getJSONObject(i);
+                                    String addr[] = obj.getString("address").split(",");
+                                    LatLng latLng = new LatLng(Double.parseDouble(addr[0]), Double.parseDouble(addr[1]));
+                                    String addressName = obj.getString("address");
+                                    try {
+                                        addressName = Properties.getAddressNameByLatLng(getContext(), latLng);
+                                    } catch (Exception e) {
+                                        addressName = obj.getString("address");
+                                        e.printStackTrace();
+                                    }
+
                                     orders.add(new Order(
                                             obj.getInt("order_id"),
                                             obj.getInt("user_id"),
-                                            obj.getString("address"),
+                                            addressName,
                                             obj.getString("username"),
                                             obj.getString("contact_no"),
                                             obj.getString("date"),

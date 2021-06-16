@@ -1,7 +1,10 @@
 package com.dehaja.venteahubmilktea.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -33,6 +37,9 @@ import com.dehaja.venteahubmilktea.ui.driver.OrderFragment;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -46,6 +53,8 @@ public class MainMenuActivity extends AppCompatActivity {
     private VenteaUser user;
     private AppBarConfiguration mAppBarConfiguration;
     private SQLiteDatabase database;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Location loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +69,13 @@ public class MainMenuActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         Intent intent = getIntent();
-        this.user =  (VenteaUser) intent.getSerializableExtra("VenteaUser");
+        this.user = (VenteaUser) intent.getSerializableExtra("VenteaUser");
 
         if (!this.user.getAccesslevel().equalsIgnoreCase(Properties.CUSTOMER)) {
             FloatingActionButton fab = findViewById(R.id.fab);
             fab.setVisibility(View.GONE);
             fab.hide();
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         }
 
         // Set nav details
@@ -129,7 +139,7 @@ public class MainMenuActivity extends AppCompatActivity {
         // reset/remove value
         getIntent().removeExtra("VenteaUser");
         user = null;
-        
+
         // Intent declaration
         Intent logoutIntent = new Intent("android.intent.action.LOGIN");
         logoutIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -166,8 +176,13 @@ public class MainMenuActivity extends AppCompatActivity {
                             if (Validator.isResponseSuccess(res.getString("response"))) {
                                 String msg = String.format("Order status has been updated to %s", Properties.DELIVERING);
                                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                                // move to maps
-
+                                if (loc == null) {
+                                    // Update driver's loc
+                                    updateDriverLoc(view, user.getId(), order_id, -1, -1);
+                                } else {
+                                    // Update driver's loc
+                                    updateDriverLoc(view, user.getId(), order_id, loc.getLatitude(), loc.getLongitude());
+                                }
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error accepting order", Toast.LENGTH_LONG).show();
                             }
@@ -201,4 +216,63 @@ public class MainMenuActivity extends AppCompatActivity {
         q.add(jsonObjRequest);
     }
 
+    private void updateDriverLoc(View view, int user_id, int order_id, double latitude, double longitude) {
+        String url = Properties.SERVER_URL + "api/App_Update_Driver_Loc.php";
+        RequestQueue q = Volley.newRequestQueue(this);
+        StringRequest jsonObjRequest = new StringRequest(Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject res = new JSONObject(response);
+                            if (Validator.isResponseSuccess(res.getString("response"))) {
+                                // move to maps
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Failed updating driver location", Toast.LENGTH_LONG).show();
+                error.printStackTrace();
+            }
+        }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("flag", "i");
+                params.put("delivered_by", String.valueOf(user_id));
+                params.put("order_id", String.valueOf(order_id));
+                if (latitude != -1 && longitude != -1) {
+                    params.put("latitude", String.valueOf(latitude));
+                    params.put("longitude", String.valueOf(longitude));
+                }
+                return params;
+            }
+        };
+        q.add(jsonObjRequest);
+    }
+
+    private Location getLastKnowLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return loc;
+        }
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                loc = location;
+                return;
+            }
+        });
+        return loc;
+    }
 }
