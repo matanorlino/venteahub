@@ -9,7 +9,7 @@
         $state = $_GET['state'];
     }
 
-    if (is_null($state)) {
+    if (!isset($_GET['state'])) {
         $stmt = $conn->prepare("SELECT * FROM wait_driver_orders WHERE order_id=?");
         $stmt->bind_param('i', $order_id);
         if ($stmt->execute()) {
