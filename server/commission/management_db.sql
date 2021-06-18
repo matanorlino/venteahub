@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 18, 2021 at 02:57 PM
+-- Generation Time: Jun 18, 2021 at 07:43 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -238,7 +238,8 @@ INSERT INTO `product` (`product_id`, `product_category_id`, `market_price`, `sel
 (12, 6, 150, 150, 'CHSCK', 'classic-cheesecake.jpg', 'Classic', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake'),
 (13, 6, 150, 150, 'CHSCK', 'strawberry-cheesecake.jpg', 'Strawberry', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake'),
 (14, 6, 150, 150, 'CHSCK', 'oreo-cheesecake.jpg', 'Oreo', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake'),
-(15, 6, 150, 150, 'CHSCK', 'mango-cheesecake.jpg', 'Mango', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake');
+(15, 6, 150, 150, 'CHSCK', 'mango-cheesecake.jpg', 'Mango', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a.', 'notSale', 'Cheesecake'),
+(16, 18, 90, 80, 'BLKPRL', 'boba.jpg', 'S', 'BLKPRL', 'BLKPRL', 'notSale', 'BLKPRL');
 
 -- --------------------------------------------------------
 
@@ -316,6 +317,12 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 
 --
+-- Indexes for table `category`
+--
+ALTER TABLE `category`
+  ADD PRIMARY KEY (`category_id`);
+
+--
 -- Indexes for table `customer_order`
 --
 ALTER TABLE `customer_order`
@@ -331,8 +338,26 @@ ALTER TABLE `driver_location`
   ADD KEY `delivered_by` (`delivered_by`);
 
 --
+-- Indexes for table `feedback`
+--
+ALTER TABLE `feedback`
+  ADD PRIMARY KEY (`feedback_id`);
+
+--
+-- Indexes for table `product`
+--
+ALTER TABLE `product`
+  ADD PRIMARY KEY (`product_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `category`
+--
+ALTER TABLE `category`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `customer_order`
@@ -345,6 +370,18 @@ ALTER TABLE `customer_order`
 --
 ALTER TABLE `driver_location`
   MODIFY `driver_location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `feedback`
+--
+ALTER TABLE `feedback`
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `product`
+--
+ALTER TABLE `product`
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
