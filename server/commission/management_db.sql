@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2021 at 12:47 PM
--- Server version: 10.4.19-MariaDB
--- PHP Version: 8.0.7
+-- Generation Time: Jun 18, 2021 at 02:57 PM
+-- Server version: 10.4.17-MariaDB
+-- PHP Version: 8.0.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -67,7 +67,32 @@ CREATE TABLE `customer_order` (
 --
 
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `order_date`, `delivered_by`, `date_delivered`, `order_no`) VALUES
-(1, 4, 'wait_deliver', 'bahay', 'wala naman', '', 0, '2021-05-13 11:20:00', 7, '2021-05-13 13:50:24', '');
+(1, 4, 'delivering', '14.287049,121.107627', '', '0912 3456 789', 0, '2021-06-15 23:02:35', 7, '2021-06-16 12:17:27', '4210615230219'),
+(2, 4, 'delivering', '14.282611,121.104670', '', '0912 3456 789', 0, '2021-06-16 20:43:14', 7, '2021-06-16 12:45:25', '4210616204135');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `delivering_orders`
+-- (See below for the actual view)
+--
+CREATE TABLE `delivering_orders` (
+`user_id` int(11)
+,`username` varchar(255)
+,`contact_no` varchar(15)
+,`date` datetime
+,`order_id` int(20)
+,`product_id` int(11)
+,`product_img` varchar(255)
+,`product_name` varchar(255)
+,`address` varchar(255)
+,`qty` int(11)
+,`sell_price` float
+,`sub_total` double
+,`state` varchar(255)
+,`request` text
+,`delivered_by` int(11)
+);
 
 -- --------------------------------------------------------
 
@@ -91,6 +116,28 @@ INSERT INTO `driver` (`driver_id`, `driver_name`, `driver_email`, `driver_phone`
 (6, 'benben', 'ben@gmail.com', '0912312'),
 (7, 'lara', 'lara@gmail.com', '091231231'),
 (9, 'mimi', 'mimi@gmail.com', '092131881');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `driver_location`
+--
+
+CREATE TABLE `driver_location` (
+  `driver_location_id` int(11) NOT NULL,
+  `delivered_by` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `latitude` decimal(11,8) NOT NULL,
+  `longitude` decimal(11,8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `driver_location`
+--
+
+INSERT INTO `driver_location` (`driver_location_id`, `delivered_by`, `order_id`, `latitude`, `longitude`) VALUES
+(5, 7, 1, '0.00000000', '0.00000000'),
+(7, 7, 2, '0.00000000', '0.00000000');
 
 -- --------------------------------------------------------
 
@@ -143,6 +190,14 @@ CREATE TABLE `order_products` (
   `qty` int(11) NOT NULL,
   `request` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `order_products`
+--
+
+INSERT INTO `order_products` (`order_id`, `product_id`, `qty`, `request`) VALUES
+(1, 7, 3, ''),
+(2, 8, 2, '');
 
 -- --------------------------------------------------------
 
@@ -222,7 +277,30 @@ INSERT INTO `user` (`id`, `username`, `password`, `email`, `contact_no`, `access
 -- (See below for the actual view)
 --
 CREATE TABLE `wait_driver_orders` (
+`user_id` int(11)
+,`username` varchar(255)
+,`contact_no` varchar(15)
+,`date` datetime
+,`order_id` int(20)
+,`product_id` int(11)
+,`product_img` varchar(255)
+,`product_name` varchar(255)
+,`address` varchar(255)
+,`qty` int(11)
+,`sell_price` float
+,`sub_total` double
+,`state` varchar(255)
+,`request` text
 );
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `delivering_orders`
+--
+DROP TABLE IF EXISTS `delivering_orders`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `delivering_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`order_date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request`, `co`.`delivered_by` AS `delivered_by` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'delivering' ;
 
 -- --------------------------------------------------------
 
@@ -231,121 +309,42 @@ CREATE TABLE `wait_driver_orders` (
 --
 DROP TABLE IF EXISTS `wait_driver_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wait_driver_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, `co`.`order_date` AS `date`, `co`.`order_id` AS `order_id`, `op`.`product_id` AS `product_id`, `prod`.`product_img` AS `product_img`, `prod`.`product_name` AS `product_name`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) WHERE `co`.`state` = 'wait_deliver' ;
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`category_id`);
-
---
 -- Indexes for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  ADD PRIMARY KEY (`order_id`),
-  ADD KEY `buyer_id` (`buyer_id`),
-  ADD KEY `product_id` (`delivered_by`),
+  ADD PRIMARY KEY (`order_id`);
+
+--
+-- Indexes for table `driver_location`
+--
+ALTER TABLE `driver_location`
+  ADD PRIMARY KEY (`driver_location_id`),
+  ADD UNIQUE KEY `delivered_by_2` (`delivered_by`,`order_id`),
+  ADD KEY `order_id` (`order_id`),
   ADD KEY `delivered_by` (`delivered_by`);
-
---
--- Indexes for table `driver`
---
-ALTER TABLE `driver`
-  ADD PRIMARY KEY (`driver_id`);
-
---
--- Indexes for table `feedback`
---
-ALTER TABLE `feedback`
-  ADD PRIMARY KEY (`feedback_id`);
-
---
--- Indexes for table `gcash_information`
---
-ALTER TABLE `gcash_information`
-  ADD PRIMARY KEY (`number`);
-
---
--- Indexes for table `order_products`
---
-ALTER TABLE `order_products`
-  ADD PRIMARY KEY (`order_id`,`product_id`);
-
---
--- Indexes for table `product`
---
-ALTER TABLE `product`
-  ADD PRIMARY KEY (`product_id`),
-  ADD KEY `product_category_id` (`product_category_id`);
-
---
--- Indexes for table `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `category`
---
-ALTER TABLE `category`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
-
---
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `order_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `order_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `driver`
+-- AUTO_INCREMENT for table `driver_location`
 --
-ALTER TABLE `driver`
-  MODIFY `driver_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- AUTO_INCREMENT for table `feedback`
---
-ALTER TABLE `feedback`
-  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `product`
---
-ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- AUTO_INCREMENT for table `user`
---
-ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `customer_order`
---
-ALTER TABLE `customer_order`
-  ADD CONSTRAINT `customer_order_ibfk_1` FOREIGN KEY (`buyer_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `customer_order_ibfk_2` FOREIGN KEY (`delivered_by`) REFERENCES `user` (`id`);
-
---
--- Constraints for table `product`
---
-ALTER TABLE `product`
-  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`product_category_id`) REFERENCES `category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `driver_location`
+  MODIFY `driver_location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
