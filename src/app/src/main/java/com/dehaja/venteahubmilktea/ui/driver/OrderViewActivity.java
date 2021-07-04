@@ -2,11 +2,14 @@ package com.dehaja.venteahubmilktea.ui.driver;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -28,6 +31,8 @@ import com.dehaja.venteahubmilktea.R;
 import com.dehaja.venteahubmilktea.models.Order;
 import com.dehaja.venteahubmilktea.models.OrderItem;
 import com.dehaja.venteahubmilktea.models.VenteaUser;
+import com.dehaja.venteahubmilktea.ui.MainMenuActivity;
+import com.dehaja.venteahubmilktea.ui.common.DeliveryMapsFragment;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -224,6 +229,8 @@ public class OrderViewActivity extends AppCompatActivity {
                             JSONObject res = new JSONObject(response);
                             if (Validator.isResponseSuccess(res.getString("response"))) {
                                 // move to maps
+//                                Intent intent = new Intent(OrderViewActivity.this, DeliveryMapsFragment.class);
+//                                startActivity(intent);
                                 closeOnClick(view);
                             }
                         } catch (JSONException e) {
