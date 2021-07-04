@@ -244,7 +244,6 @@ public class CheckoutActivity extends AppCompatActivity {
     private void startOrderNotifier(){
         Data data = new Data.Builder()
                 .putString(OrderStatusNotifier.ORDER_NUMBER, orderNumber)
-                .putString(OrderStatusNotifier.TIMER_TASK, OrderStatusNotifier.TIMER_TASK_1)
                 .build();
 
         final PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
