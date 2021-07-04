@@ -34,7 +34,7 @@ import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
-import com.dehaja.venteahubmilktea.util.orders.OrderStatusNotifier;
+import com.dehaja.venteahubmilktea.util.orders.NotificationService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -198,8 +198,7 @@ public class CheckoutActivity extends AppCompatActivity {
                                 if (Validator.isResponseSuccess(res.getString("response"))) {
                                     cartItems.remove(0);
                                     postOrderItems(orderId, cartItems);
-                                    Toast.makeText(getApplicationContext(), "Order placed", Toast.LENGTH_LONG).show();
-                                    startOrderNotifier();
+                                    startNotificationService(orderId);
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Error placing order", Toast.LENGTH_LONG).show();
                                 }
@@ -241,17 +240,10 @@ public class CheckoutActivity extends AppCompatActivity {
         }
     }
 
-    private void startOrderNotifier(){
-        Data data = new Data.Builder()
-                .putString(OrderStatusNotifier.ORDER_NUMBER, orderNumber)
-                .build();
-
-        final PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                .Builder(OrderStatusNotifier.class, 10, TimeUnit.SECONDS)
-                .setInputData(data)
-                .build();
-
-        WorkManager.getInstance(getApplicationContext()).enqueue(periodicWorkRequest);
+    private void startNotificationService(int orderId){
+        Intent intent = new Intent(this, NotificationService.class);
+        intent.putExtra(NotificationService.ORDER_ID, orderId);
+        startService(intent);
     }
 
     private void endActivity() {
