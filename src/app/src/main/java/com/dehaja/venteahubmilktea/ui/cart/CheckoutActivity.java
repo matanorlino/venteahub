@@ -16,6 +16,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -30,6 +34,7 @@ import com.dehaja.venteahubmilktea.models.VenteaUser;
 import com.dehaja.venteahubmilktea.util.cart.CartUtil;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
+import com.dehaja.venteahubmilktea.util.orders.OrderStatusNotifier;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +46,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class CheckoutActivity extends AppCompatActivity {
 
@@ -193,6 +199,7 @@ public class CheckoutActivity extends AppCompatActivity {
                                     cartItems.remove(0);
                                     postOrderItems(orderId, cartItems);
                                     Toast.makeText(getApplicationContext(), "Order placed", Toast.LENGTH_LONG).show();
+                                    startOrderNotifier();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Error placing order", Toast.LENGTH_LONG).show();
                                 }
@@ -232,6 +239,20 @@ public class CheckoutActivity extends AppCompatActivity {
             startActivity(intent);
             endActivity();
         }
+    }
+
+    private void startOrderNotifier(){
+        Data data = new Data.Builder()
+                .putString(OrderStatusNotifier.ORDER_NUMBER, orderNumber)
+                .putString(OrderStatusNotifier.TIMER_TASK, OrderStatusNotifier.TIMER_TASK_1)
+                .build();
+
+        final PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
+                .Builder(OrderStatusNotifier.class, 10, TimeUnit.SECONDS)
+                .setInputData(data)
+                .build();
+
+        WorkManager.getInstance(getApplicationContext()).enqueue(periodicWorkRequest);
     }
 
     private void endActivity() {

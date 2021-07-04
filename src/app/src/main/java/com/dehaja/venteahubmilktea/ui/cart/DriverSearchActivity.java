@@ -95,7 +95,6 @@ public class DriverSearchActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }, error -> {
-                                Toast.makeText(getApplicationContext(), "Failed to load Order list", Toast.LENGTH_LONG).show();
                                 error.printStackTrace();
                             });
                     q.add(jsonObjRequest);
