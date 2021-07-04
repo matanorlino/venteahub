@@ -10,6 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -78,7 +79,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
     //polyline object
     private List<Polyline> polylines = null;
     private Location myLocation = null;
-    private Location destinationLocation = null;
+    private LatLng destinationLocation = null;
     private LatLng venteaLoc = new LatLng(14.28715398053406, 121.10748793798585);
     protected LatLng start = null;
     protected LatLng end = null;
@@ -92,7 +93,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
     private TextView txtMapNoRecord;
     private SupportMapFragment mapFragment;
 
-    private boolean hasNoRecord = false;
+    private boolean hasNoRecord = true;
     private boolean hasOrder = false;
 
 
@@ -120,6 +121,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
             if (user.getAccesslevel().equals(Properties.DRIVER)) {
                 if (hasNoRecord) {
                     DeliveryMapsFragment.this.map.clear();
+                    setDriversView();
                 } else {
                     getMyLocation();
                 }
@@ -150,10 +152,11 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         super.onViewCreated(view, savedInstanceState);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
-            mapFragment.getMapAsync(callback);
             if (user.getAccesslevel().equals(Properties.DRIVER)) {
                 setDriversView();
+                getToDeliverOrder(getContext());
             } else {
+                mapFragment.getMapAsync(callback);
                 setCustomerView();
             }
         }
@@ -205,7 +208,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //if permission granted.
                     locationPermission = true;
-                    getMyLocation();
+                    //getMyLocation();
 
                 } else {
                     // permission denied, boo! Disable the
@@ -216,7 +219,7 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         }
     }
 
-    //to get user location
+    //to get driver location
     private void getMyLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getContext(),"Unable to get location. Please check your location permission.",Toast.LENGTH_LONG).show();
@@ -233,7 +236,14 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
                         ltlng, 16f);
                 map.moveCamera(cameraUpdate);
-                findRoutes(ltlng, venteaLoc);
+                if (order != null) {
+                    String address[] = order.getAddress().split(",");
+                    double lat = Float.parseFloat(address[0]);
+                    double lng = Float.parseFloat(address[1]);
+                    destinationLocation = new LatLng(lat, lng);
+                }
+                findRoutes(ltlng, destinationLocation);
+                updateDriverLoc(user.getId(), order.getOrder_id(), myLocation.getLatitude(), myLocation.getLongitude());
             }
         });
 
@@ -359,21 +369,27 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                                 if (data.length() < 1) {
                                     txtMapNoRecord.setVisibility(View.VISIBLE);
                                     hasNoRecord = true;
+                                } else {
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject obj = data.getJSONObject(i);
+                                        order = new Order(
+                                                obj.getInt("order_id"),
+                                                obj.getInt("user_id"),
+                                                obj.getString("address"),
+                                                obj.getString("username"),
+                                                obj.getString("contact_no"),
+                                                obj.getString("date"),
+                                                (float)obj.getDouble("total"),
+                                                obj.getInt("delivered_by")
+                                        );
+                                    }
                                 }
-                                for (int i = 0; i < data.length(); i++) {
-                                    JSONObject obj = data.getJSONObject(i);
-                                    order = new Order(
-                                            obj.getInt("order_id"),
-                                            obj.getInt("user_id"),
-                                            obj.getString("address"),
-                                            obj.getString("username"),
-                                            obj.getString("contact_no"),
-                                            obj.getString("date"),
-                                            (float)obj.getDouble("total"),
-                                            obj.getInt("delivered_by")
-                                     );
+                                if (order != null) {
+                                    hasNoRecord = false;
+                                    setDriversView();
+                                    setOnBtnClickListener();
+                                    mapFragment.getMapAsync(callback);
                                 }
-                                setOnBtnClickListener();
                             } else {
                                 Toast.makeText(getContext(), "Failed to load Order", Toast.LENGTH_LONG).show();
                             }
@@ -412,10 +428,15 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                                 String msg = String.format("Order status has been updated to %s", state);
                                 Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
 
-                                getToDeliverOrder(getContext());
+//                                getToDeliverOrder(getContext());
                             } else {
                                 Toast.makeText(getContext(), "Error accepting order", Toast.LENGTH_LONG).show();
                             }
+                            clearItems();
+                            Intent mainCustomerIntent = new Intent("android.intent.action.CUSTOMER");
+                            mainCustomerIntent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                            mainCustomerIntent.putExtra("VenteaUser", user);
+                            startActivity(mainCustomerIntent);
                         } catch (JSONException e) {
                             Toast.makeText(getContext(), "Error accepting order", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
@@ -446,6 +467,43 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
         q.add(jsonObjRequest);
     }
 
+    private void updateDriverLoc(int user_id, int order_id, double latitude, double longitude) {
+        String url = Properties.SERVER_URL + "api/App_Update_Driver_Loc.php";
+        RequestQueue q = Volley.newRequestQueue(getContext());
+        StringRequest jsonObjRequest = new StringRequest(Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // nothing to do
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("flag", "u");
+                params.put("delivered_by", String.valueOf(user_id));
+                params.put("order_id", String.valueOf(order_id));
+                if (latitude != -1 && longitude != -1) {
+                    params.put("latitude", String.valueOf(latitude));
+                    params.put("longitude", String.valueOf(longitude));
+                }
+                return params;
+            }
+        };
+        q.add(jsonObjRequest);
+    }
     public void setOnBtnClickListener() {
         if (!hasNoRecord && order != null) {
             txtMapNoRecord.setVisibility(View.VISIBLE);
@@ -514,7 +572,13 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
                                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
                                         driverLoc, 16f);
                                 map.moveCamera(cameraUpdate);
-                                findRoutes(driverLoc, venteaLoc);
+                                if (deliveringItem != null) {
+                                    String address[] = deliveringItem.getAddress().split(",");
+                                    double lat = Float.parseFloat(address[0]);
+                                    double lng = Float.parseFloat(address[1]);
+                                    destinationLocation = new LatLng(lat, lng);
+                                }
+                                findRoutes(driverLoc, destinationLocation);
                                 setCustomerView();
 //                                setOnBtnClickListener();
                             } else {
@@ -533,5 +597,10 @@ public class DeliveryMapsFragment extends Fragment implements OnMapReadyCallback
             }
         });
         q.add(jsonObjRequest);
+    }
+
+    private void clearItems() {
+        deliveringItem = null;
+        hasNoRecord = true;
     }
 }
