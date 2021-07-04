@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VenteaHubMilkTea"
         android:usesCleartextTraffic="true">
+        <service android:enabled="true" android:name=".util.orders.NotificationService" />
         <activity android:name=".ui.cart.SelectAddressActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

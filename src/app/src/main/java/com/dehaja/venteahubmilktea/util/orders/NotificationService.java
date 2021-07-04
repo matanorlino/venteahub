@@ -2,73 +2,53 @@ package com.dehaja.venteahubmilktea.util.orders;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.Service;
 import android.content.Context;
-import android.os.Handler;
-import android.widget.Toast;
+import android.content.Intent;
+import android.os.IBinder;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dehaja.venteahubmilktea.R;
-import com.dehaja.venteahubmilktea.models.Order;
+import com.dehaja.venteahubmilktea.util.constants.NotificationTool;
 import com.dehaja.venteahubmilktea.util.constants.Properties;
 import com.dehaja.venteahubmilktea.util.constants.Validator;
 
-public class OrderStatusNotifier extends Worker {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    public static final String ORDER_NUMBER = "order_number";
-    public static final String TIMER_TASK = "timer_task";
-    public static final String TIMER_TASK_1 = "timeTask1";
-    private OrderStatus orderStatus;
+public class NotificationService extends Service {
 
-    public OrderStatusNotifier(@NonNull @NotNull Context context, @NonNull @NotNull WorkerParameters workerParams) {
-        super(context, workerParams);
-    }
+    public static final String ORDER_ID = "order_id";
+    private boolean firstFetch = true;
 
-    @NonNull
-    @NotNull
     @Override
-    public Result doWork() {
-        orderStatus = OrderStatus.getInstance();
-        String status = orderStatus.getOrderStatus();
-        String orderNumber = getInputData().getString(ORDER_NUMBER);
-
-        try {
-            if (status.equals(Properties.DELIVERING)) {
-                displayNotification("VenteaHub Milktea", "Driver Found!");
-                getStatus(orderNumber);
-            } else if (status.equals(Properties.CANCELLED)) {
-                displayNotification("VenteaHub Milktea", "Order was Cancelled!");
-                WorkManager.getInstance(getApplicationContext()).cancelAllWork();
-            } else if (status.equals(Properties.RECEIVED)) {
-                displayNotification("VenteaHub Milktea", "Order Completed!");
-                WorkManager.getInstance(getApplicationContext()).cancelAllWork();
-            } else {
-                getStatus(orderNumber);
-            }
-        } catch (Exception e) {
-            getStatus(orderNumber);
-        }
-
-        return Result.success();
+    public void onCreate() {
+        super.onCreate();
     }
 
-    private void getStatus(String orderNumber) {
-        String url = Properties.SERVER_URL + "api/App_Get_Order_Status.php?order_id=" + orderNumber;
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        int orderId = intent.getIntExtra(ORDER_ID, 0);
+        getStatus(orderId);
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void getStatus(int orderId) {
+        String url = Properties.SERVER_URL + "api/App_Get_Order_Status.php?order_id=" + orderId;
 
         RequestQueue q = Volley.newRequestQueue(getApplicationContext());
         StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
@@ -80,7 +60,25 @@ public class OrderStatusNotifier extends Worker {
                             JSONArray data = res.getJSONArray("data");
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject obj = data.getJSONObject(i);
-                                orderStatus.setOrderStatus(obj.getString("state"));
+                                String status = obj.getString("state");
+
+                                try {
+                                    if (status.equals(Properties.DELIVERING) && firstFetch) {
+                                        displayNotification("VenteaHub Milktea", "Driver Found!");
+                                        getStatus(orderId);
+                                        firstFetch = false;
+                                    } else if (status.equals(Properties.CANCELLED)) {
+                                        displayNotification("VenteaHub Milktea", "Order was Cancelled!");
+                                        stopService(new Intent(this, NotificationService.class));
+                                    } else if (status.equals(Properties.RECEIVED)) {
+                                        displayNotification("VenteaHub Milktea", "Order Completed!");
+                                        stopService(new Intent(this, NotificationService.class));
+                                    } else {
+                                        getStatus(orderId);
+                                    }
+                                } catch (Exception e) {
+                                    getStatus(orderId);
+                                }
                             }
                         }
                     } catch (JSONException e) {
@@ -91,6 +89,7 @@ public class OrderStatusNotifier extends Worker {
         });
         q.add(jsonObjRequest);
     }
+
 
     private void displayNotification(String title, String message) {
         NotificationManager notificationManager =
@@ -108,6 +107,5 @@ public class OrderStatusNotifier extends Worker {
                 .setSmallIcon(R.mipmap.ic_launcher);
 
         notificationManager.notify(1, notification.build());
-
     }
 }
