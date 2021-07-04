@@ -6,7 +6,7 @@
         $delivered_by = $_GET['delivered_by'];
     }
 
-    $stmt = $conn->prepare("SELECT order_id, user_id, address, username, contact_no, date, SUM(qty * sell_price) AS total, delivered_by FROM delivering_orders WHERE delivered_by=? GROUP BY order_id ORDER BY date DESC");
+    $stmt = $conn->prepare("SELECT order_id, user_id, address, username, contact_no, date, SUM(qty * sell_price) AS total, delivered_by FROM delivering_orders WHERE delivered_by=? GROUP BY order_id ORDER BY date DESC LIMIT 1");
     $stmt->bind_param('i', $delivered_by);
     if ($stmt->execute()) {
         $result = $stmt->get_result();

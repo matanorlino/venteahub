@@ -17,7 +17,18 @@
 	
 	$response = null;
 	if ($stmt->execute()) {
-		$response = new CommonResponse('1', null,"SUCCESS");
+		if ($state == 'cancelled' || $state == 'received') {
+			$stmt = null;
+			$stmt = $conn->prepare("DELETE FROM driver_location WHERE delivered_by=? AND order_id=?");
+			$stmt->bind_param('ii', $user_id, $order_id);
+			if($stmt->execute()) {
+				$response = new CommonResponse('1', null,"SUCCESS");	
+			} else {
+				$response = new CommonResponse('0',null,"ERROR");	
+			}
+		} else {
+			$response = new CommonResponse('1', null,"SUCCESS");
+		}
 	} else {
 		$response = new CommonResponse('0',null,"ERROR");
 	}
