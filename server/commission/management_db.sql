@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 18, 2021 at 07:43 PM
+-- Generation Time: Jul 06, 2021 at 07:06 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -20,6 +20,26 @@ SET time_zone = "+00:00";
 --
 -- Database: `management_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `all_orders`
+-- (See below for the actual view)
+--
+CREATE TABLE `all_orders` (
+`user_id` int(11)
+,`username` varchar(255)
+,`contact_no` varchar(15)
+,`date` varchar(278)
+,`order_id` int(20)
+,`address` varchar(255)
+,`qty` int(11)
+,`sell_price` float
+,`sub_total` double
+,`state` varchar(255)
+,`request` text
+);
 
 -- --------------------------------------------------------
 
@@ -67,8 +87,11 @@ CREATE TABLE `customer_order` (
 --
 
 INSERT INTO `customer_order` (`order_id`, `buyer_id`, `state`, `address`, `request`, `phone`, `qty`, `order_date`, `delivered_by`, `date_delivered`, `order_no`) VALUES
-(1, 4, 'delivering', '14.287049,121.107627', '', '0912 3456 789', 0, '2021-06-15 23:02:35', 7, '2021-06-16 12:17:27', '4210615230219'),
-(2, 4, 'delivering', '14.282611,121.104670', '', '0912 3456 789', 0, '2021-06-16 20:43:14', 7, '2021-06-16 12:45:25', '4210616204135');
+(1, 4, 'cancelled', '14.287049,121.107627', '', '0912 3456 789', 0, '2021-06-15 23:02:35', 7, '2021-07-04 11:21:32', '4210615230219'),
+(2, 4, 'received', '14.282611,121.104670', '', '0912 3456 789', 0, '2021-06-16 20:43:14', 7, '2021-07-04 08:32:48', '4210616204135'),
+(3, 4, 'received', '14.287540,121.093966', '', '0912 3456 789', 0, '2021-07-04 19:27:50', 7, '2021-07-04 11:29:43', '4210704192728'),
+(4, 4, 'delivering', '14.275612,121.084418', '', '0912 3456 789', 0, '2021-07-04 19:47:36', 7, '2021-07-04 11:48:09', '4210704194718'),
+(5, 4, 'wait_deliver', '14.296275,121.099665', '', '0912 3456 789', 0, '2021-07-04 21:12:39', 0, NULL, '4210704211228');
 
 -- --------------------------------------------------------
 
@@ -136,8 +159,7 @@ CREATE TABLE `driver_location` (
 --
 
 INSERT INTO `driver_location` (`driver_location_id`, `delivered_by`, `order_id`, `latitude`, `longitude`) VALUES
-(5, 7, 1, '0.00000000', '0.00000000'),
-(7, 7, 2, '0.00000000', '0.00000000');
+(13, 7, 4, '14.30791170', '121.08920570');
 
 -- --------------------------------------------------------
 
@@ -147,18 +169,18 @@ INSERT INTO `driver_location` (`driver_location_id`, `delivered_by`, `order_id`,
 
 CREATE TABLE `feedback` (
   `feedback_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `feedback_desc` varchar(255) NOT NULL,
-  `feedback_date` varchar(255) NOT NULL
+  `feedback_desc` text NOT NULL,
+  `feedback_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `feedback`
 --
 
-INSERT INTO `feedback` (`feedback_id`, `product_id`, `user_id`, `feedback_desc`, `feedback_date`) VALUES
-(1, 7, 6, 'Good!', '01/26/2021');
+INSERT INTO `feedback` (`feedback_id`, `order_id`, `user_id`, `feedback_desc`, `feedback_date`) VALUES
+(1, 3, 4, 'test abc', '2021-07-06 16:51:17');
 
 -- --------------------------------------------------------
 
@@ -197,7 +219,14 @@ CREATE TABLE `order_products` (
 
 INSERT INTO `order_products` (`order_id`, `product_id`, `qty`, `request`) VALUES
 (1, 7, 3, ''),
-(2, 8, 2, '');
+(2, 8, 2, ''),
+(3, 7, 1, ''),
+(3, 1, 1, ''),
+(3, 13, 5, ''),
+(3, 9, 1, ''),
+(3, 8, 1, ''),
+(4, 10, 2, ''),
+(5, 7, 2, '');
 
 -- --------------------------------------------------------
 
@@ -297,6 +326,15 @@ CREATE TABLE `wait_driver_orders` (
 -- --------------------------------------------------------
 
 --
+-- Structure for view `all_orders`
+--
+DROP TABLE IF EXISTS `all_orders`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `all_orders`  AS SELECT `user`.`id` AS `user_id`, `user`.`username` AS `username`, `user`.`contact_no` AS `contact_no`, concat(`co`.`order_date`,' (',`co`.`state`,') ') AS `date`, `co`.`order_id` AS `order_id`, `co`.`address` AS `address`, `op`.`qty` AS `qty`, `prod`.`sell_price` AS `sell_price`, `prod`.`sell_price`* `op`.`qty` AS `sub_total`, `co`.`state` AS `state`, `op`.`request` AS `request` FROM (((`order_products` `op` left join `customer_order` `co` on(`op`.`order_id` = `co`.`order_id`)) left join `product` `prod` on(`op`.`product_id` = `prod`.`product_id`)) left join `user` on(`co`.`buyer_id` = `user`.`id`)) ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view `delivering_orders`
 --
 DROP TABLE IF EXISTS `delivering_orders`;
@@ -363,13 +401,13 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `order_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `order_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `driver_location`
 --
 ALTER TABLE `driver_location`
-  MODIFY `driver_location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `driver_location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -381,7 +419,7 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
