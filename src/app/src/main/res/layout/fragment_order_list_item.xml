@@ -98,6 +98,20 @@
             app:layout_constraintStart_toEndOf="@+id/btnCardViewOrder"
             app:layout_constraintTop_toTopOf="@+id/btnCardViewOrder" />
 
+        <Button
+            android:id="@+id/btnCardFeedback"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:onClick="onClickBtnFeedback"
+            android:text="@string/action_feedback"
+            android:textColorHighlight="@color/green"
+            android:textColorLink="@color/green"
+            android:textCursorDrawable="@color/green"
+            app:layout_constraintStart_toEndOf="@+id/btnCardViewOrder"
+            app:layout_constraintTop_toTopOf="@+id/btnCardViewOrder" />
+
         <TextView
             android:id="@+id/txtCardTotal"
             android:layout_width="wrap_content"

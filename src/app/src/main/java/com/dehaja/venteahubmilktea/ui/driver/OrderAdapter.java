@@ -39,9 +39,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     private LayoutInflater inflater;
     private List<Order> orders;
     private View view;
-    public OrderAdapter(Context context, List<Order> order) {
+    private VenteaUser user;
+    public OrderAdapter(Context context, List<Order> order, VenteaUser user) {
         this.inflater = LayoutInflater.from(context);
         this.orders = order;
+        this.user = user;
     }
 
     @NonNull
@@ -60,6 +62,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date parsedDate = sdf.parse(orders.get(position).getDate());
             String formattedDate = new SimpleDateFormat(datePattern).format(parsedDate);
+            if (user.getAccesslevel().equals(Properties.CUSTOMER)) {
+                String _date = orders.get(position).getDate();
+                String state = _date.substring(_date.indexOf('('), _date.length());
+                formattedDate += " " + state;
+            }
+
             System.out.println("Formatted Date: " + formattedDate);
             holder.cardAddress.setText(orders.get(position).getAddress());
             holder.cardContactNo.setText(orders.get(position).getContact_no());
@@ -67,6 +75,15 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             holder.cardTotal.setText(String.format("%s %.2f", Properties.PESO_SIGN, orders.get(position).getTotal()));
             holder.viewOrder.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
             holder.acceptOrder.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
+            holder.feedBack.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
+
+            if (user.getAccesslevel().equals(Properties.DRIVER)) {
+                holder.feedBack.setVisibility(View.INVISIBLE);
+                holder.acceptOrder.setVisibility(View.VISIBLE);
+            } else if (user.getAccesslevel().equals(Properties.CUSTOMER)) {
+                holder.feedBack.setVisibility(View.VISIBLE);
+                holder.acceptOrder.setVisibility(View.INVISIBLE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,6 +111,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         TextView cardTotal;
         Button viewOrder;
         Button acceptOrder;
+        Button feedBack;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -103,6 +121,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             cardTotal = itemView.findViewById(R.id.txtCardTotal);
             viewOrder = itemView.findViewById(R.id.btnCardViewOrder);
             acceptOrder = itemView.findViewById(R.id.btnCardAccept);
+            feedBack = itemView.findViewById(R.id.btnCardFeedback);
         }
     }
 }

@@ -87,7 +87,7 @@ public class MainMenuActivity extends AppCompatActivity {
         if (this.user.getAccesslevel().equals(Properties.CUSTOMER)) {
             navigationView.inflateMenu(R.menu.activity_main_drawer_customer);
             mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_product, R.id.nav_order_history, R.id.nav_account)
+                    R.id.nav_product, R.id.nav_order_history, R.id.nav_account, R.id.nav_history)
                     .setDrawerLayout(drawer)
                     .build();
 
@@ -274,5 +274,13 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
         return loc;
+    }
+
+    public void onClickBtnFeedback(View view) {
+        Intent feedbackIntent = new Intent("android.intent.action.FEEDBACK");
+        feedbackIntent.putExtra("VenteaUser", user);
+        feedbackIntent.putExtra("order_id", view.getContentDescription());
+
+        startActivity(feedbackIntent);
     }
 }

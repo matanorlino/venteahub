@@ -22,4 +22,9 @@
         android:name="com.dehaja.venteahubmilktea.ui.common.AccountFragment"
         android:label="@string/menu_account"
         tools:layout="@layout/fragment_account" />
+    <fragment
+        android:id="@+id/nav_history"
+        android:name="com.dehaja.venteahubmilktea.ui.driver.OrderFragment"
+        android:label="@string/menu_history"
+        tools:layout="@layout/fragment_order" />
 </navigation>

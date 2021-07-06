@@ -68,7 +68,13 @@ public class OrderFragment extends Fragment {
     }
 
     private void getOrderList(Context context, SwipeRefreshLayout refreshLayout) {
-        String url = Properties.SERVER_URL + "api/App_Get_Wait_Driver.php";
+        String url = "";
+        if (user.getAccesslevel().equals(Properties.DRIVER)) {
+            url = Properties.SERVER_URL + "api/App_Get_Wait_Driver.php";
+        } else {
+            url = Properties.SERVER_URL + "api/App_Get_Order_History.php?buyer_id="+ user.getId();
+        }
+
         RequestQueue q = Volley.newRequestQueue(context);
         StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
                 url,
@@ -106,7 +112,7 @@ public class OrderFragment extends Fragment {
                                 // Set adapter to recycler view
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
                                 recyclerView.setLayoutManager(layoutManager);
-                                orderAdapter = new OrderAdapter(getContext(), orders);
+                                orderAdapter = new OrderAdapter(getContext(), orders, user);
                                 recyclerView.setAdapter(orderAdapter);
 
                                 if(refreshLayout != null) {
