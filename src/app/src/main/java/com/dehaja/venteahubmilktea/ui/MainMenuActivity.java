@@ -154,9 +154,11 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     public void onClickViewOrder(View view) {
+        boolean from_hist = view.getTag() != null && (boolean)view.getTag();
         Intent viewOrderIntent = new Intent("android.intent.action.ORDER_VIEW");
         viewOrderIntent.putExtra("order_id", Integer.parseInt(view.getContentDescription().toString()));
         viewOrderIntent.putExtra("VenteaUser", user);
+        viewOrderIntent.putExtra("is_from_hist", from_hist);
         startActivity(viewOrderIntent);
     }
 

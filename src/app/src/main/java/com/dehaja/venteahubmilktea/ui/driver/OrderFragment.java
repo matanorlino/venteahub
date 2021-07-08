@@ -1,5 +1,6 @@
 package com.dehaja.venteahubmilktea.ui.driver;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -45,14 +46,14 @@ public class OrderFragment extends Fragment {
     private List<Order> orders;
     private OrderAdapter orderAdapter;
     private VenteaUser user;
+    private boolean isFromHistory;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_order, container, false);
-
         user = (VenteaUser) getActivity().getIntent().getSerializableExtra("VenteaUser");
         recyclerView = root.findViewById(R.id.recOrderList);
-
+        isFromHistory = false;
         loadInit(null);
 
         SwipeRefreshLayout refreshLayout = root.findViewById(R.id.fragment_order_layout);
@@ -71,8 +72,10 @@ public class OrderFragment extends Fragment {
         String url = "";
         if (user.getAccesslevel().equals(Properties.DRIVER)) {
             url = Properties.SERVER_URL + "api/App_Get_Wait_Driver.php";
+            isFromHistory = false;
         } else {
             url = Properties.SERVER_URL + "api/App_Get_Order_History.php?buyer_id="+ user.getId();
+            isFromHistory = true;
         }
 
         RequestQueue q = Volley.newRequestQueue(context);
@@ -112,7 +115,7 @@ public class OrderFragment extends Fragment {
                                 // Set adapter to recycler view
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
                                 recyclerView.setLayoutManager(layoutManager);
-                                orderAdapter = new OrderAdapter(getContext(), orders, user);
+                                orderAdapter = new OrderAdapter(getContext(), orders, user, isFromHistory);
                                 recyclerView.setAdapter(orderAdapter);
 
                                 if(refreshLayout != null) {

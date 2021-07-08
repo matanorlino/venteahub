@@ -53,6 +53,7 @@ public class OrderViewActivity extends AppCompatActivity {
     VenteaUser user;
     Order order;
     int order_id;
+    boolean isFromHist;
     RecyclerView recyclerView;
     TextView txtUsername;
     TextView txtGrandTotal;
@@ -68,6 +69,7 @@ public class OrderViewActivity extends AppCompatActivity {
         // get value from extra
         user = (VenteaUser) getIntent().getSerializableExtra("VenteaUser");
         order_id = getIntent().getIntExtra("order_id", 0);
+        isFromHist = getIntent().getBooleanExtra("is_from_hist", false);
         System.out.println("order_id: " + order_id);
         recyclerView = findViewById(R.id.recOrderView);
         btnOrderViewAccept = findViewById(R.id.btnOrderViewAccept);
@@ -89,13 +91,16 @@ public class OrderViewActivity extends AppCompatActivity {
 
     private void getOrderItems(Context context) {
         String url = "";
-        if (user.getAccesslevel().equals(Properties.DRIVER)) {
-            url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id="+order_id;
+        if (isFromHist) {
+            url = Properties.SERVER_URL + "api/App_Get_All_Order_Item.php?order_id="+order_id;
         } else {
-            url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id=" + order_id
-                    + "&state=" + Properties.DELIVERING;
+            if (user.getAccesslevel().equals(Properties.DRIVER)) {
+                url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id="+order_id;
+            } else {
+                url = Properties.SERVER_URL + "api/App_Get_Order_Item.php?order_id=" + order_id
+                        + "&state=" + Properties.DELIVERING;
+            }
         }
-
         RequestQueue q = Volley.newRequestQueue(context);
         StringRequest jsonObjRequest = new StringRequest(Request.Method.GET,
                 url,

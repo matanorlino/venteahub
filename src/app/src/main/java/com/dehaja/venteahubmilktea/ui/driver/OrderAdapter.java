@@ -40,10 +40,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     private List<Order> orders;
     private View view;
     private VenteaUser user;
-    public OrderAdapter(Context context, List<Order> order, VenteaUser user) {
+    private boolean isFromHistory;
+    public OrderAdapter(Context context, List<Order> order, VenteaUser user, boolean isFromHistory) {
         this.inflater = LayoutInflater.from(context);
         this.orders = order;
         this.user = user;
+        this.isFromHistory = isFromHistory;
     }
 
     @NonNull
@@ -74,6 +76,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             holder.cardDate.setText(formattedDate.toUpperCase());
             holder.cardTotal.setText(String.format("%s %.2f", Properties.PESO_SIGN, orders.get(position).getTotal()));
             holder.viewOrder.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
+            holder.viewOrder.setTag(isFromHistory);
             holder.acceptOrder.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
             holder.feedBack.setContentDescription(String.valueOf(orders.get(position).getOrder_id()));
 

@@ -32,12 +32,13 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     private VenteaUser user;
+    private final String server_url = "www.venteahub.ga";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         user = new VenteaUser();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        Properties.SERVER_URL = server_url;
         createConfigFile();
     }
 
